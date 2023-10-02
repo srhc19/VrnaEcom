@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 62.5%;
+  line-height: 1.5;
+  position: relative;
+  font-family: "poppins", sans-serif;
+}
+.heading-primary {
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  font-size: 4rem;
+}
+th {
+  font-size: 2rem;
+  background-color: rgb(236, 236, 243);
+}
+td {
+  font-size: 2rem;
+  background-color: rgb(236, 236, 243);
+}
+.logout-btn {
+  position: absolute;
+  right: 5%;
+  font-size: 1.8rem;
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9px;
+}
+.formpd {
+  margin-bottom: 1.5rem;
+}
+.pdright {
+  padding-right: 1.5rem;
+}
+.btn-padding {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  border-radius: 6px;
+}

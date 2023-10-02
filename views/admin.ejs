@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Rubik:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="Admin.css" />
+    <title>Admin Page</title>
+  </head>
+  <body style="background-color:rgb(236, 236, 243)">
+    <div class="index-container">
+      <form action="/logout?_method=DELETE" method="post">
+        <button class="logout-btn btn-secondary" type="submit">Log Out</button>
+      </form>
+      <h1 class="text-center heading-primary">Welcome to the Admin Page</h1>
+    </div>
+    <div class="container" style="background-color: rgb(236, 236, 243)">
+      <table class="table caption-top">
+        <caption class="h3">
+          List of users
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">NAME</th>
+            <th scope="col">Email</th>
+            <th scope="col"></th>
+            <th scope="col">
+              <div class="dropdown">
+                <button
+                  class="btn btn-success dropdown-toggle btn-padding"
+                  type="button "
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Add
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <form
+                      class="dropdown-item"
+                      method="post"
+                      action="/admin/add"
+                    >
+                      <label class="formpd pdright" for="name">Name:</label>
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                      /><br />
+
+                      <label class="formpd pdright" for="email">Email:</label>
+                      <input
+                        class="formpd"
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                      /><br />
+
+                      <label class="formpd" for="password">Password:</label>
+                      <input
+                        class="formpd"
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                      /><br />
+                      <!-- 
+                      <label for="isAdmin">Is Admin:</label>
+                      <input
+                        type="checkbox"
+                        id="isAdmin"
+                        name="isAdmin"
+                      /><br /> -->
+
+                      <button class="formpd btn-padding" type="submit">
+                        Add User
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% let num = 1 ;%> <% user.forEach((users) =>{ %>
+          <tr>
+            <th scope="row"><%=num%></th>
+            <td><%= users.name %></td>
+            <td><%= users.email %></td>
+            <td>
+              <div class="dropdown">
+                <button
+                  class="btn btn-info dropdown-toggle btn-padding"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  onclick="populateUpdateForm('<%= users._id %>', '<%= users.name %>', '<%= users.email %>')"
+                >
+                  Update
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <form
+                      class="dropdown-item"
+                      method="post"
+                      action="/admin/update/<%= users._id %>"
+                    >
+                      <!-- Use unique form identifiers for each user -->
+                      <label
+                        class="formpd pdright"
+                        for="updateName<%= users._id %>"
+                        >Name:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="updateName<%= users._id %>"
+                        name="updateName"
+                        required
+                      /><br />
+
+                      <label
+                        class="formpd pdright"
+                        for="updateEmail<%= users._id %>"
+                        >Email:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="email"
+                        id="updateEmail<%= users._id %>"
+                        name="updateEmail"
+                        required
+                      /><br />
+
+                      <label class="formpd" for="updatePassword<%= users._id %>"
+                        >Password:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="password"
+                        id="updatePassword<%= users._id %>"
+                        name="updatePassword"
+                        required
+                      /><br />
+
+                      <!-- Remove isAdmin checkbox for individual user updates -->
+
+                      <button class="btn-padding btn-padding" type="submit">
+                        Update User
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <form method="post" action="/admin/delete/<%= users._id %>">
+                <button type="submit" class="btn btn-danger btn-padding">
+                  Delete
+                </button>
+              </form>
+            </td>
+          </tr>
+          <% num = num+1%> <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function populateUpdateForm(userId, name, email) {
+        // Get the form fields by their IDs
+        const updateNameField = document.getElementById(`updateName${userId}`);
+        const updateEmailField = document.getElementById(
+          `updateEmail${userId}`
+        );
+
+        // Set the values of the form fields with user data
+        updateNameField.value = name;
+        updateEmailField.value = email;
+      }
+    </script>
+  </body>
+</html>

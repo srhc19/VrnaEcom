@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+body {
+  font-family: "Lora", serif;
+}
+.error-message {
+  font-size: 1.4rem;
+  color: red;
+  font-family: 600;
+}
+.login-img {
+  width: 35%;
+  height: auto;
+}
+
+.login-container {
+  display: flex;
+  gap: 3rem;
+  margin-top: 10rem;
+  margin-left: 30rem;
+}
+.formtab {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.input-value {
+  font-size: 2.5rem;
+  border: none;
+  border-bottom: 1px solid rgb(105, 105, 105);
+  padding-bottom: 5px;
+}
+.input-value::placeholder {
+  font-size: 1.4rem;
+}
+.login-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 1.4rem;
+}
+.main-container {
+  text-align: center;
+}
+.register-btn {
+  margin-top: 3rem;
+  text-decoration: none;
+  color: black;
+}
+h2 {
+  font-size: 1.4rem;
+}
+.primary-heading {
+  margin-top: 1rem;
+
+  margin-bottom: 3.5rem;
+}
+.create-btn {
+  margin-top: 3rem;
+}
+.forgot {
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-decoration: none;
+  color: black;
+}
+.heading-primary {
+  margin-top: 5rem;
+  margin-left: 28rem;
+}
+/* footer */
+.footer-container {
+  margin-top: 9rem;
+  background-color: #3d352f;
+  padding: 4rem 4rem 1.2rem 4rem;
+  color: azure;
+  font-size: 1.2rem;
+}
+
+.footer-link {
+  text-decoration: none;
+  padding: 1rem;
+  color: azure;
+}
+.footerul {
+  list-style: none;
+  text-align: start;
+}
+.copyright {
+  padding: 1rem;
+  text-decoration: overline;
+}
+/* nav */
+.nav-main {
+  display: flex;
+  gap: 1.5rem;
+  font: size 2rem;
+  align-items: center;
+}
+.nav-container {
+  margin-top: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.navmain-heading {
+  font-size: 2rem;
+}
+.nav-sec {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}

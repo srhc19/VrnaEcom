@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  overflow-x: hidden;
+}
+body {
+  font-family: "Lora", serif;
+  overflow-x: hidden;
+}
+/* nav */
+.nav-main {
+  display: flex;
+  gap: 1.5rem;
+  font: size 2rem;
+  align-items: center;
+}
+.nav-container {
+  padding-top: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.navmain-heading {
+  font-size: 2rem;
+}
+.nav-sec {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+/* header */
+.mainheading-container {
+  text-align: start;
+}
+h1 {
+  font-size: 6.2rem;
+}
+.btn-shopnow {
+  padding: 0.1rem 1rem;
+  font-size: 2rem;
+  background-color: #3d352f;
+}
+.section1-container {
+  height: 100vh;
+  background-image: url(/images/main-img1.jpg);
+  background-size: cover;
+}
+.summer-container {
+  padding-top: 20rem;
+  text-align: start;
+}
+.shoptheLook {
+  font-family: Lora;
+
+  font-style: normal;
+  font-weight: 700;
+  line-height: 50px;
+  letter-spacing: 13.6px;
+  padding: 2rem;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 700;
+  mix-blend-mode: luminosity;
+  color: #d12764;
+
+  position: relative;
+}
+
+.mainimg2 {
+  width: 100vw;
+}
+.titleOldSchool {
+  font-size: 4rem;
+  position: absolute;
+  top: 135%;
+  left: 5%;
+}
+/* cards */
+.cardContainer {
+  margin-top: 7rem;
+}
+.btn-Buynow {
+  padding: 0.5rem 1rem;
+  background-color: #3d352f;
+  color: azure;
+}
+.card-icon {
+  color: #3d352f;
+  font-size: 2rem;
+}
+.link-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.shopall {
+  text-align: center;
+}
+.btn-shopall {
+  background-color: #3d352f;
+  color: azure;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+/* footer */
+.footer-container {
+  margin-top: 9rem;
+  background-color: #3d352f;
+  padding: 4rem 4rem 1.2rem 4rem;
+  color: azure;
+  font-size: 1.2rem;
+}
+
+.footer-link {
+  text-decoration: none;
+  padding: 1rem;
+  color: azure;
+}
+.footerul {
+  list-style: none;
+  text-align: start;
+}
+.copyright {
+  padding: 1rem;
+  text-decoration: overline;
+}
+.logout-btn {
+  padding: 0.5rem 1rem;
+  background-color: #3d352f;
+  color: azure;
+}
