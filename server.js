@@ -18,6 +18,7 @@ const path = require("path"); // For handling file uploads
 const UserModel = require("./models/user");
 const userOtpModel = require("./models/userOtpVerification");
 const addProductsModel = require("./models/addproducts");
+const categoryModel = require("./models/category");
 //controllers
 const initializePassport = require("./controllers/passport-config");
 const userController = require("./controllers/usercontrollers");
@@ -230,4 +231,12 @@ app.post(
   }
 );
 
-app.get("/adminprod
+app.get("/adminproduct", async (req, res) => {
+  try {
+    const products = await addProductsModel.find();
+    res.render("adminproductpage", { products });
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.listen(3000);
