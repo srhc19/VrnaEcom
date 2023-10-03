@@ -119,17 +119,17 @@
             </tr>
           </thead>
           <tbody>
-            <% let num = 1 ;%> <% user.forEach((users) =>{ %>
+            <% let num = 1 ;%> <% categories.forEach((category) =>{ %>
             <tr>
               <th scope="row"><%=num%></th>
               <td>
                 <div class="productname">
                   <!-- <img class="productimg" src="images/images.jpg" alt="" /> -->
-                  <p>nameofproduct</p>
+                  <p><%=category.categoryName%></p>
                 </div>
               </td>
 
-              <td><%= active%></td>
+              <td>active</td>
               <td>
                 <div class="action">
                   <!-- UPDATE -->
@@ -139,7 +139,7 @@
                       type="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
-                      onclick="populateUpdateForm('<%= users._id %>', '<%= users.name %>', '<%= users.email %>')"
+                      onclick="populateUpdateForm('<%= category._id %>', '<%=category.categoryName %>',)"
                     >
                       Update
                     </button>
@@ -148,44 +148,44 @@
                         <form
                           class="dropdown-item"
                           method="post"
-                          action="/admin/update/<%= users._id %>"
+                          action="/admin/update/<%= category._id %>"
                         >
                           <!-- Use unique form identifiers for each user -->
                           <label
                             class="formpd pdright"
-                            for="updateName<%= users._id %>"
+                            for="updateName<%= category._id %>"
                             >Name:</label
                           >
                           <input
                             class="formpd"
                             type="text"
-                            id="updateName<%= users._id %>"
+                            id="updateName<%= category._id %>"
                             name="updateName"
                             required
                           /><br />
 
                           <label
                             class="formpd pdright"
-                            for="updateEmail<%= users._id %>"
+                            for="updateEmail<%= category._id %>"
                             >Email:</label
                           >
                           <input
                             class="formpd"
                             type="email"
-                            id="updateEmail<%= users._id %>"
+                            id="updateEmail<%= category._id %>"
                             name="updateEmail"
                             required
                           /><br />
 
                           <label
                             class="formpd"
-                            for="updatePassword<%= users._id %>"
+                            for="updatePassword<%= category._id %>"
                             >Password:</label
                           >
                           <input
                             class="formpd"
                             type="password"
-                            id="updatePassword<%= users._id %>"
+                            id="updatePassword<%= category._id %>"
                             name="updatePassword"
                             required
                           /><br />
@@ -203,7 +203,7 @@
                 </div>
               </td>
               <td>
-                <form method="post" action="/admin/delete/<%= users._id %>">
+                <form method="post" action="/admin/delete/<%= category._id %>">
                   <button type="submit" class="btn btn-danger btns">
                     Delete
                   </button>

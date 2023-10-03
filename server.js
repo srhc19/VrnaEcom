@@ -239,4 +239,42 @@ app.get("/adminproduct", async (req, res) => {
     console.log(error);
   }
 });
+
+app.get("/adminCategories", async (req, res) => {
+  try {
+    const categories = await categoryModel.find();
+    if (categories) {
+      res.render("adminCategories", { categories });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/userprofile", async (req, res) => {
+  try {
+    if (!req.session.user) {
+      console.log("User not found");
+      return res.status(404).send("You are not logged in");
+    }
+
+    const user = await UserModel.findOne({ _id: req.session.user._id });
+
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).send("User not found");
+    }
+
+    console.log("User data:", user);
+
+    res.render("userprofile", { user });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/product", (req, res) => {
+  res.render("product");
+});
 app.listen(3000);

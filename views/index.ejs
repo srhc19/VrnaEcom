@@ -45,7 +45,7 @@
               Every Day
             </h1>
             <button class="btn-shopnow">Shop Now</button>
-          <p>welcome <%=name%> </p></div>
+      
         </div>
       </div>
       <div class="shoptheLook">SHOP THE LOOK
@@ -53,44 +53,33 @@
       <img class="mainimg2" src="./images/main-img2.webp" alt="men in gym">
       <h3 class="titleOldSchool">The lifting collection <br>that combines old school fits <br>with new school features.</h3>
     
-   <div class="container">
-       <div class="container text-center cardContainer">
+
+<div class="container">
+  <div class="container text-center cardContainer">
     <div class="row">
-      <div class="col">
-        <div class="card" style="width: 18rem;">
-          <img src="./images/menhoodie1.webp" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">LEGACY DROP ARM HOODIE</h5>
-            <p class="card-text">Old-school styles meet new-school functionalities in a collection designed to make gains and build legacies.
-
-              .</p>
-            <div class="link-container"><a href="#" class="btn btn-Buynow">Buy Now</a>
-            <a  class="card-icon" href="#"><ion-icon name="heart-outline"></ion-icon></a>
-          <a  class="card-icon" href="#"><ion-icon name="cart-outline"></ion-icon></a></div>
-
+      <% for (let i = 0; i < products.length; i++) { %>
+        <% if (i % 5 === 0) { %>
+          </div><div class="row">
+        <% } %>
+        <div class="col">
+          <div class="card" style="width: 18rem;">
+            <img src="<%= products[i].productImages %>" class="card-img-top" alt="<%= products[i].productName %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= products[i].productName %></h5>
+              <p class="card-text"><%= products[i].description %></p>
+              <div class="link-container">
+                <a href="/product" class="btn btn-Buynow">Buy Now</a>
+                <a class="card-icon" href="#"><ion-icon name="heart-outline"></ion-icon></a>
+                <a class="card-icon" href="#"><ion-icon name="cart-outline"></ion-icon></a>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col">
-        Column
-      </div>
-      <div class="col">
-        Column
-      </div>
-      <div class="col">
-        Column
-      </div>
-      <div class="col">
-        Column
-      </div>
-      
+      <% } %>
     </div>
   </div>
-  <div class="shopall">
-<button class="btn-shopall">SHOP ALL PRODUCTS</button>
+</div>
 
-</div>
-</div>
 <footer>
   <div class="text-center footer-container">
     <div class="container">

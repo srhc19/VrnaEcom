@@ -1,3 +1,4 @@
+const addproductsModel = require("../models/addproducts");
 const UserModel = require("../models/user");
 const userOtpModel = require("../models/userOtpVerification");
 const bcrypt = require("bcrypt");
@@ -26,7 +27,7 @@ const postLoginPage = async (req, res) => {
   res.redirect("/");
 };
 
-const displayMainPage = function (req, res) {
+const displayMainPage = async function (req, res) {
   // Prevent caching
   res.setHeader("Cache-Control", "no-store, max-age=0");
   //if user is in session
@@ -34,7 +35,8 @@ const displayMainPage = function (req, res) {
     if (req.session.user.isAdmin) {
       res.redirect("/admin");
     } else {
-      res.render("index.ejs", { name: req.session.user.name });
+      const products = await addproductsModel.find();
+      res.render("index.ejs", { products });
     }
   } else {
     res.redirect("/login");
@@ -123,9 +125,7 @@ async function postRegister(req, res) {
       return res.redirect("/login");
     }
 
-  
-
-    // Calculate the expiration time 
+    // Calculate the expiration time
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 10);
 
