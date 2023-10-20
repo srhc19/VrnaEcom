@@ -79,7 +79,7 @@
             </tr>
           </thead>
           <tbody id="productTableBody">
-            <% let num = 1 ;%> <% products.forEach((product) =>{ %>
+            <% let num = <%=num%> ;%> <% products.forEach((product) =>{ %>
             <tr>
               <th scope="row"><%=num%></th>
               <td>
@@ -100,72 +100,9 @@
               <td>
                 <div class="action">
                   <!-- UPDATE -->
-                  <div class="dropdown">
-                    <button
-                      class="btn btn-info dropdown-toggle btns button"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                      onclick="populateUpdateForm('<%= product._id %>', '<%= product.productName %>', '<%= product.productCategory %>')"
-                    >
-                      Update
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li>
-                        <form
-                          class="dropdown-item"
-                          method="post"
-                          action="/admin/update/<%= product._id %>"
-                        >
-                          <!-- Use unique form identifiers for each user
-                          <label
-                            class="formpd pdright"
-                            for="updateName<%= product._id %>"
-                            >Name:</label
-                          >
-                          <input
-                            class="formpd"
-                            type="text"
-                            id="updateName<%= product._id %>"
-                            name="updateName"
-                            required
-                          /><br />
+                  <a href="/admin/update/<%= product._id %>"><button class="btn btn-info btns button">Update</button></a>
 
-                          <label
-                            class="formpd pdright"
-                            for="updateEmail<%= product._id %>"
-                            >Email:</label
-                          >
-                          <input
-                            class="formpd"
-                            type="email"
-                            id="updateEmail<%= product._id %>"
-                            name="updateEmail"
-                            required
-                          /><br />
-
-                          <label
-                            class="formpd"
-                            for="updatePassword<%= product._id %>"
-                            >Password:</label
-                          >
-                          <input
-                            class="formpd"
-                            type="password"
-                            id="updatePassword<%= product._id %>"
-                            name="updatePassword"
-                            required
-                          /><br /> -->
-
-                          <!-- Remove isAdmin checkbox for individual user updates -->
-
-                          <!-- <button class="btn-padding btn-padding" type="submit">
-                            Update User
-                          </button> -->
-                        </form>
-                      </li>
-                    </ul>
-                  </div>
+               
                   <!-- DELETE -->
                 </div>
               </td>

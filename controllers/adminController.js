@@ -192,7 +192,6 @@ async function adminProduct(req, res) {
       // Parse the page query parameter from the request
       const page = parseInt(req.query.page) || 1;
 
-      // Calculate the skip value based on the current page and items per page
       const skip = (page - 1) * ITEMS_PER_PAGE;
 
       // Query the database to get a subset of products based on pagination
@@ -201,16 +200,21 @@ async function adminProduct(req, res) {
         .skip(skip)
         .limit(ITEMS_PER_PAGE);
 
-      // Count the total number of products for pagination
       const totalProductsCount = await addProductsModel.countDocuments();
 
       // Calculate the total number of pages based on the total products and items per page
       const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
+      if (currentPage > 1) {
+        num = ITEMS_PER_PAGE * currentPage;
+      } else {
+        num = 1;
+      }
 
       res.render("adminproductpage", {
         products,
         currentPage: page,
         totalPages,
+        num,
       });
     } else {
       res.send("You are not an admin");
@@ -364,6 +368,7 @@ async function search(req, res) {
 async function blockUser(req, res) {
   const userId = req.params.userId;
   try {
+    console.log("hey");
     const user = await UserModel.findById(userId);
     console.log(user);
     if (!user) {

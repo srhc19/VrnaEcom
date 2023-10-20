@@ -107,17 +107,18 @@
 
       checkboxes.forEach((checkbox) => {
         checkbox.addEventListener("change", async (event) => {
-          const userId = event.target.getAttribute("data-userid");
-          const isBlocked =
-            event.target.getAttribute("data-isblocked") === "true"; // Parse the value as a boolean
+  const userId = event.target.getAttribute("data-userid");
 
-          try {
-            const response = await fetch(`/admin/blockUser/${userId}`);
-            
-          } catch (error) {
-            console.log("error", error);
-          }
-        });
+
+  try {
+    const response = await fetch(`/admin/blockUser/${userId}`,{
+      method: "POST", 
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
+});
+
       });
     </script>
   </body>

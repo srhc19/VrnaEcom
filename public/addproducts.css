@@ -98,3 +98,22 @@ body {
 .successmsg {
   text-align: center;
 }
+/* updateProduct */
+.productimg {
+  padding: 0.5rem;
+  max-height: 80%;
+  max-width: 80%;
+}
+.imgremove {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: #3d352f;
+}
+.imgremove:hover,
+.imgremove:active {
+  text-decoration: underline;
+}
+.img-upload-C {
+  max-height: 100px;
+  max-width: 100px;
+}

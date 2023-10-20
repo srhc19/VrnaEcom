@@ -21,7 +21,10 @@ const postLoginPage = async (req, res) => {
     req.flash("error", "Invalid Email");
     return res.redirect("/user/login");
   }
-
+  if (user.isBlocked) {
+    req.flash("error", "Your Account has been blocked by the admin");
+    return res.redirect("/user/login");
+  }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     req.flash("error", "Invalid Password");
