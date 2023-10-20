@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Rubik:wght@300;400&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="login.css" />
+    <link rel="stylesheet" href="/login.css" />
 
     <title>Login Page</title>
   </head>
@@ -45,7 +45,7 @@
 
         <div class="main-container">
           <h2 class="primary-heading">LOGIN TO YOUR ACCOUNT</h2>
-          <form class="formtab" action="/login" method="post">
+          <form class="formtab" action="/user/login" method="post">
            
             <div>
               <!-- <label for="email">Email</label> -->
@@ -71,9 +71,9 @@
             </div>
             <button class="login-btn" type="submit">Login</button>
           </form>
-          <h4><a class="forgot" href="#">FORGOT PASSWORD?</a></h4>
+          <h4><a class="forgot" href="/user/forgotpaswordemail">FORGOT PASSWORD?</a></h4>
           <h2 class="create-btn">
-            <a class="register-btn" href="/register">CREATE NEW ACCOUNT</a>
+            <a class="register-btn" href="/user/register">CREATE NEW ACCOUNT</a>
           </h2>
           <% if (messages.error) { %>
             <p class="error-message"><%= messages.error[0] %></p>

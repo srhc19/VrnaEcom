@@ -10,9 +10,7 @@ html {
 body {
   font-family: "Lora", serif;
 }
-h3 {
-  margin-bottom: 3rem;
-}
+
 .product-details {
   font-size: 1.4rem;
 }
@@ -40,11 +38,11 @@ h3 {
   margin-left: 10rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  /* gap: 1rem; */
 }
 .image-gallery {
   display: flex;
-  gap: 1rem;
+  gap: 3rem;
   align-items: center;
   align-self: center;
 }
@@ -60,8 +58,8 @@ h3 {
   height: auto;
 }
 .imagemain {
-  width: 50%;
-  height: auto;
+  max-width: 60%;
+  max-width: auto;
 }
 /* footer */
 .footer-container {
@@ -89,7 +87,7 @@ h3 {
 .nav-main {
   display: flex;
   gap: 1.5rem;
-  font: size 2rem;
+  font-size: 2rem;
   align-items: center;
 }
 .nav-container {
@@ -104,4 +102,16 @@ h3 {
   display: flex;
   align-items: center;
   gap: 1.2rem;
+}
+.zoom-container {
+  position: relative;
+  overflow: hidden;
+  width: 500px;
+  height: 300px;
+}
+.imagemain {
+  transition: transform 0.3s ease-in-out;
+}
+.zoom-container:hover .imagemain {
+  transform: scale(1.2); /* Adjust the scale factor as needed */
 }

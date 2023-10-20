@@ -16,30 +16,43 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="adminCategories.css" />
+    <link rel="stylesheet" href="/adminCategories.css" />
     <title>Admin Categories Page</title>
   </head>
   <body style="background-color: rgb(236, 236, 243)">
-    <div class="logout-container">
-      <form action="/logout?_method=DELETE" method="post">
-        <button class="logout-btn btn-secondary" type="submit">Log Out</button>
-      </form>
-    </div>
     <div class="mainContainer">
       <div class="rows adminpanel">
-        <div class="column">DASHBOARD</div>
-        <div class="column">PRODUCTS</div>
-        <div class="column">CATEGORIES</div>
-        <div class="column">ORDERS</div>
-        <div class="column">COUPONDS</div>
-        <div class="column">CUSTOMERS</div>
+        <div class="column">
+          <a class="dashboardlinks" href="#">DASHBOARD</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/adminproduct">PRODUCTS</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="#">CATEGORIES</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/adminOrderdetails">ORDERS</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="#">COUPONDS</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/">CUSTOMERS</a>
+        </div>
+        <div class="logout-container">
+          <form action="/admin/adminCategories/logout" method="post">
+            <button class="logout-btn btn-secondary" type="submit">
+              Log Out
+            </button>
+          </form>
+        </div>
       </div>
 
       <div class="container" style="background-color: rgb(236, 236, 243)">
-        <h1 class="text-start heading-primary">CATEGORIES</h1>
         <table class="table caption-top">
           <div class="addcontainer">
-            <div class="h3">LIST OF CATEGORIES</div>
+            <div class="h5">LIST OF CATEGORIES</div>
             <div class="searchbox">
               <form class="d-flex" role="search">
                 <input
@@ -48,7 +61,7 @@
                   placeholder="Search"
                   aria-label="Search"
                 />
-                <button class="btn btn-outline-success" type="submit">
+                <button class="btn btn-outline-success btnSearch" type="submit">
                   Search
                 </button>
               </form>
@@ -56,52 +69,47 @@
             <!-- addproducts -->
             <div class="dropdown">
               <button
-                class="btn btn-success dropdown-toggle btn-padding"
+                class="btn btn-success dropdown-toggle btn-padding button"
                 type="button "
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
                 Add
               </button>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu p-3">
                 <li>
-                  <form class="dropdown-item" method="post" action="/admin/add">
-                    <label class="formpd pdright" for="name">Name:</label>
-                    <input
-                      class="formpd"
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                    /><br />
+                  <form
+                    class="dropdown-item"
+                    method="post"
+                    action="/admin/addCategories"
+                  >
+                    <div class="d-flex flex-column">
+                      <label class="formpd pdright" for="name"
+                        >Category Name:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="categoryName"
+                        name="categoryName"
+                        required
+                      /><br />
+                    </div>
 
-                    <label class="formpd pdright" for="email">Email:</label>
-                    <input
-                      class="formpd"
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                    /><br />
-
-                    <label class="formpd" for="password">Password:</label>
-                    <input
-                      class="formpd"
-                      type="password"
-                      id="password"
-                      name="password"
-                      required
-                    /><br />
-                    <!-- 
-              <label for="isAdmin">Is Admin:</label>
-              <input
-                type="checkbox"
-                id="isAdmin"
-                name="isAdmin"
-              /><br /> -->
-
-                    <button class="formpd btn-padding" type="submit">
-                      Add User
+                    <div class="d-flex flex-column">
+                      <label class="formpd pdright" for="email"
+                        >Is Active:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="isActive"
+                        name="isActive"
+                        required
+                      /><br />
+                    </div>
+                    <button class="formpd btn-padding button" type="submit">
+                      Add Category
                     </button>
                   </form>
                 </li>
@@ -110,7 +118,7 @@
           </div>
           <thead>
             <tr>
-              <th scope="col">#</th>
+              <th scope="col">S.NO</th>
               <th scope="col">CATEGORY</th>
 
               <th scope="col">ACTIVE</th>
@@ -129,13 +137,13 @@
                 </div>
               </td>
 
-              <td>active</td>
+              <td><%=category.isActive%></td>
               <td>
                 <div class="action">
                   <!-- UPDATE -->
                   <div class="dropdown">
                     <button
-                      class="btn btn-info dropdown-toggle btns"
+                      class="btn btn-info dropdown-toggle btns button"
                       type="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -148,51 +156,40 @@
                         <form
                           class="dropdown-item"
                           method="post"
-                          action="/admin/update/<%= category._id %>"
+                          action="/admin/adminCategories/update/<%= category._id %>"
                         >
-                          <!-- Use unique form identifiers for each user -->
-                          <label
-                            class="formpd pdright"
-                            for="updateName<%= category._id %>"
-                            >Name:</label
-                          >
-                          <input
-                            class="formpd"
-                            type="text"
-                            id="updateName<%= category._id %>"
-                            name="updateName"
-                            required
-                          /><br />
+                          <div class="d-flex flex-column">
+                            <label class="formpd pdright" for="name"
+                              >Category Name:</label
+                            >
+                            <input
+                              class="formpd"
+                              type="text"
+                              id="categoryName"
+                              name="categoryName"
+                              required
+                            /><br />
+                          </div>
 
-                          <label
-                            class="formpd pdright"
-                            for="updateEmail<%= category._id %>"
-                            >Email:</label
-                          >
-                          <input
-                            class="formpd"
-                            type="email"
-                            id="updateEmail<%= category._id %>"
-                            name="updateEmail"
-                            required
-                          /><br />
-
-                          <label
-                            class="formpd"
-                            for="updatePassword<%= category._id %>"
-                            >Password:</label
-                          >
-                          <input
-                            class="formpd"
-                            type="password"
-                            id="updatePassword<%= category._id %>"
-                            name="updatePassword"
-                            required
-                          /><br />
+                          <div class="d-flex flex-column">
+                            <label class="formpd pdright" for="email"
+                              >Is Active:</label
+                            >
+                            <input
+                              class="formpd"
+                              type="text"
+                              id="isActive"
+                              name="isActive"
+                              required
+                            /><br />
+                          </div>
 
                           <!-- Remove isAdmin checkbox for individual user updates -->
 
-                          <button class="btn-padding btn-padding" type="submit">
+                          <button
+                            class="btn-padding btn-padding button"
+                            type="submit"
+                          >
                             Update User
                           </button>
                         </form>
@@ -203,8 +200,11 @@
                 </div>
               </td>
               <td>
-                <form method="post" action="/admin/delete/<%= category._id %>">
-                  <button type="submit" class="btn btn-danger btns">
+                <form
+                  method="post"
+                  action="/admin/adminCategories/delete/<%= category._id %>"
+                >
+                  <button type="submit" class="btn btn-danger btns button">
                     Delete
                   </button>
                 </form>

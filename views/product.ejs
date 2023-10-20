@@ -15,11 +15,14 @@
       href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Rubik:wght@300;400&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="elevatezoom/jquery.elevatezoom.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <link rel="stylesheet" href="product.css" />
+    <script src="elevatezoom/jquery.elevatezoom.js"></script> -->
 
-    <title>Login Page</title>
+  <link rel="stylesheet" href="/product.css" />
+ 
+
+    <title>Product Page</title>
   </head>
   <body>
     <div class="container nav-container">
@@ -34,41 +37,31 @@
         <h5><ion-icon name="person-outline"></ion-icon></h5>
         <h5><ion-icon name="cart-outline"></ion-icon></h5>
         </div>
-    </h5>
+   
     </div>
     <h2 class="product-heading">PRODUCT DETAILS</h2>
     <div class="product-detail-container">
       <div class="product-images">
-          <!-- Display multiple product images in a carousel or gallery -->
-          <!-- <div class="image-gallery">
-            <div class="imageoptions">
-              <img  class="imagesub" src="images/menhoodie1.webp" alt="Product Image 1">
-              <img  class="imagesub" src="images/productimg1.webp" alt="Product Image 2">
-              <img  class="imagesub" src="images/productimg1.webp" alt="Product Image 3">
-              <img  class="imagesub" src="images/productimg5.webp" alt="Product Image 4">
-            </div>
-            
-              <img  class=" imagemain" src="images/productimg1.webp" alt="Product Image 5">
-               Add more image tags for additional product images 
-          </div> --> 
+        
           <div class="image-gallery">
             <div class="imageoptions">
-                <!-- Add an 'onclick' event to each 'imagesub' to change 'imagemain' and enable zoom -->
-                <img class="imagesub" src="images/menhoodie1.webp" alt="Product Image 1" onclick="changeMainImage(this)">
-                <img class="imagesub" src="images/productimg1.webp" alt="Product Image 2" onclick="changeMainImage(this)">
-                <img class="imagesub" src="images/productimg1.webp" alt="Product Image 3" onclick="changeMainImage(this)">
-                <img class="imagesub" src="images/productimg5.webp" alt="Product Image 4" onclick="changeMainImage(this)">
+                <!--  'onclick' event to each 'imagesub' to change 'imagemain' and enable zoom -->
+                <img class="imagesub" src="<%=data.productImages[1]%>" alt="Product Image 1" onclick="changeMainImage(this)">
+                <img class="imagesub" src="<%=data.productImages[2]%>" alt="Product Image 2" onclick="changeMainImage(this)">
+                <img class="imagesub" src="<%=data.productImages[3]%>" alt="Product Image 3" onclick="changeMainImage(this)">
+                <img class="imagesub" src="<%=data.productImages[4]%>" alt="Product Image 4" onclick="changeMainImage(this)">
             </div>
             <!-- 'imagemain' image to be displayed and zoomed -->
-            <img class="imagemain" id="mainImage" src="images/productimg1.webp" alt="Product Image 5" data-action="zoom">
+           <div class="zoom-container">
+             <img class="imagemain" id="mainImage" src="<%=data.productImages[0]%>" alt="Product Image 5" data-action="zoom" data-zoom-image="<%=data.productImages[0]%>"></div>
 
-        </div>
+</div>
       </div>
       <div class="product-details">
-          <h3>Product Name</h3>
+          <h3><%=data.productName%></h3>
           <p class="product-description">Product description goes here. <BR>
             Provide details about the product, such as its features and benefits.</p>
-          <p class="product-price"><strong>$99.99</strong></p>
+          <p class="product-price"><strong>$<%=data.productPrice%></strong></p>
           <div class="product-options">
               <label for="size">Size:</label>
               <select class="btn" id="size" name="size">
@@ -78,9 +71,9 @@
                   <!-- Add more size options if needed -->
               </select>
           </div>
-          <button class=" btn">Add to Cart</button>
+          <a href="/user/addTOCartBtn/<%=data._id%>"> <button class=" btn">Add to Cart</button></a>
           <button class=" btn">Whishlist</button>
-          <button class="btn">Buy Now</button>
+          <a href="/user/checkout/<%=data._id%>"> <button class=" btn">Buy Now</button></a>
       </div>
   </div>
     </div>
@@ -132,22 +125,24 @@
       </div>
     
     </footer>
-    <!-- Include jQuery (required for Elevate Zoom) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Include Elevate Zoom JavaScript -->
-    <script src="elevatezoom/jquery.elevatezoom.js"></script>
+
     <script>
-      // JavaScript function to change the 'imagemain' image
+      // change the 'imagemain' image
       function changeMainImage(clickedImage) {
-          // Get the 'imagemain' element
+
           var mainImage = document.getElementById("mainImage");
           // Set the 'src' attribute of 'imagemain' to the clicked image's 'src'
           mainImage.src = clickedImage.src;
       }
-     // Initialize Elevate Zoom
-     $(document).ready(function () {
-            $("#mainImage").elevateZoom();
-        });
+   
+    $(document).ready(function () {
+    $("#mainImage").elevateZoom({
+      zoomType: "lens",
+      lensShape: "round",
+      lensSize: 500, 
+    });
+    
+  });
   </script>
     <script
       type="module"

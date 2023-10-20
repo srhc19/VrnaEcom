@@ -6,6 +6,10 @@ const categorySchema = new Schema({
     type: String,
     required: true,
   },
+  isActive: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("category", categorySchema);

@@ -16,15 +16,10 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="addproducts.css" />
-    <title>Admin Products Page</title>
+    <link rel="stylesheet" href="/addproducts.css" />
+    <title>Add Products Page</title>
   </head>
   <body style="background-color: rgb(236, 236, 243)">
-    <div class="logout-container">
-      <form action="/logout?_method=DELETE" method="post">
-        <button class="logout-btn btn-secondary" type="submit">Log Out</button>
-      </form>
-    </div>
     <div class="mainContainer">
       <div class="rows adminpanel">
         <div class="column">DASHBOARD</div>
@@ -33,14 +28,21 @@
         <div class="column">ORDERS</div>
         <div class="column">COUPONDS</div>
         <div class="column">CUSTOMERS</div>
+        <div class="logout-container">
+          <form action="/user/logout?_method=DELETE" method="post">
+            <button class="logout-btn btn-secondary" type="submit">
+              LOG OUT
+            </button>
+          </form>
+        </div>
       </div>
 
       <div class="container">
-        <h1>Add New Product</h1>
+        <h5>Add New Product</h5>
         <form
           id="productForm"
           enctype="multipart/form-data"
-          action="/add-product"
+          action="/admin/add-product"
           method="post"
         >
           <div class="mb-3">
@@ -85,26 +87,40 @@
               required
             />
           </div>
+          <div class="mb-3">
+            <label for="productStock" class="form-label"
+              >Product Description</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="productdescription"
+              name="productdescription"
+              required
+            />
+          </div>
           <input
             type="file"
             name="images[]"
             id="imageInput"
             multiple
             accept="image/*"
+            class="add-btn"
           />
 
           <!-- Display uploaded images here -->
           <!-- <div id="imagePreview" class="mb-3"> -->
           <!-- Display uploaded images here -->
           <!-- </div> -->
-          <button class="add-btn" type="submit">f</button>
+          <button class="add-btn" type="submit">ADD PRODUCTS</button>
         </form>
       </div>
-      <div>
-        <% if (successMessage && successMessage.length > 0) { %>
-        <p><%= successMessage[0] %></p>
-        <% } %>
-      </div>
+      <div></div>
+    </div>
+    <div class="successmsg">
+      <% if (successMessage && successMessage.length > 0) { %>
+      <p><%= successMessage[0] %></p>
+      <% } %>
     </div>
 
     <script

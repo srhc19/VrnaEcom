@@ -11,45 +11,46 @@ body {
 
 .logout-container {
   text-align: end;
-  margin: 1rem;
 }
 
 .adminpanel {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: start;
-  margin: 2rem 2rem 0;
+  margin: 0.5rem 1rem 0 2rem;
   gap: 1.6rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: 1rem;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+  max-height: 400px;
 }
 
 .mainContainer {
-  display: grid;
-  grid-template-columns: 1fr 5fr;
+  display: flex;
+
+  justify-content: space-between;
   gap: 0.5rem;
-  padding: 2rem;
 }
 
 .btns {
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.3rem 0.6rem;
 }
 
 .productname {
   display: inline-flex;
-  max-width: 6rem;
+  /* max-width: 6rem; */
   align-items: center;
   gap: 0.5rem;
 }
 
 .productimg {
-  width: 35%;
-  height: 35%;
+  max-width: 35%;
+  max-height: 35%;
 }
 
 .action {
@@ -65,18 +66,19 @@ body {
   margin-bottom: 1rem;
 }
 .logout-btn {
+  font-size: 1rem;
   padding: 0.3rem 0.6rem;
   background-color: #3d352f;
   color: azure;
-  border-radius: 4px;
+  border-radius: 1px;
 }
 .container {
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 800px;
+  margin: 3rem;
   padding: 20px;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  /* background-color: #f5f5f5; */
+  /* border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
 }
 
 .form-label {
@@ -87,20 +89,12 @@ body {
   margin-bottom: 10px;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: #fff;
+.add-btn {
+  padding: 0.3rem 0.6rem;
+  background-color: #3d352f;
+  color: azure;
+  border-radius: 4px;
 }
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-/* Center the form vertically */
-html,
-body {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.successmsg {
+  text-align: center;
 }

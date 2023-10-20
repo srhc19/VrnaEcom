@@ -16,171 +16,76 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="Admin.css" />
+    <link rel="stylesheet" href="/Admin.css" />
     <title>Admin Page</title>
   </head>
-  <body style="background-color:rgb(236, 236, 243)">
+  <body style="background-color: rgb(236, 236, 243)">
     <div class="index-container">
-      <form action="/logout?_method=DELETE" method="post">
-        <button class="logout-btn btn-secondary" type="submit">Log Out</button>
-      </form>
-      <h1 class="text-center heading-primary">Welcome to the Admin Page</h1>
+      <h1 class="text-center heading-prima  ry">Welcome to the Admin Page</h1>
     </div>
-    <div class="container" style="background-color: rgb(236, 236, 243)">
-      <table class="table caption-top">
-        <caption class="h3">
-          List of users
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">NAME</th>
-            <th scope="col">Email</th>
-            <th scope="col"></th>
-            <th scope="col">
-              <div class="dropdown">
-                <button
-                  class="btn btn-success dropdown-toggle btn-padding"
-                  type="button "
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Add
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <form
-                      class="dropdown-item"
-                      method="post"
-                      action="/admin/add"
-                    >
-                      <label class="formpd pdright" for="name">Name:</label>
-                      <input
-                        class="formpd"
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                      /><br />
 
-                      <label class="formpd pdright" for="email">Email:</label>
-                      <input
-                        class="formpd"
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                      /><br />
-
-                      <label class="formpd" for="password">Password:</label>
-                      <input
-                        class="formpd"
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                      /><br />
-                      <!-- 
-                      <label for="isAdmin">Is Admin:</label>
-                      <input
-                        type="checkbox"
-                        id="isAdmin"
-                        name="isAdmin"
-                      /><br /> -->
-
-                      <button class="formpd btn-padding" type="submit">
-                        Add User
-                      </button>
-                    </form>
-                  </li>
-                </ul>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <% let num = 1 ;%> <% user.forEach((users) =>{ %>
-          <tr>
-            <th scope="row"><%=num%></th>
-            <td><%= users.name %></td>
-            <td><%= users.email %></td>
-            <td>
-              <div class="dropdown">
-                <button
-                  class="btn btn-info dropdown-toggle btn-padding"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                  onclick="populateUpdateForm('<%= users._id %>', '<%= users.name %>', '<%= users.email %>')"
-                >
-                  Update
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <form
-                      class="dropdown-item"
-                      method="post"
-                      action="/admin/update/<%= users._id %>"
-                    >
-                      <!-- Use unique form identifiers for each user -->
-                      <label
-                        class="formpd pdright"
-                        for="updateName<%= users._id %>"
-                        >Name:</label
-                      >
-                      <input
-                        class="formpd"
-                        type="text"
-                        id="updateName<%= users._id %>"
-                        name="updateName"
-                        required
-                      /><br />
-
-                      <label
-                        class="formpd pdright"
-                        for="updateEmail<%= users._id %>"
-                        >Email:</label
-                      >
-                      <input
-                        class="formpd"
-                        type="email"
-                        id="updateEmail<%= users._id %>"
-                        name="updateEmail"
-                        required
-                      /><br />
-
-                      <label class="formpd" for="updatePassword<%= users._id %>"
-                        >Password:</label
-                      >
-                      <input
-                        class="formpd"
-                        type="password"
-                        id="updatePassword<%= users._id %>"
-                        name="updatePassword"
-                        required
-                      /><br />
-
-                      <!-- Remove isAdmin checkbox for individual user updates -->
-
-                      <button class="btn-padding btn-padding" type="submit">
-                        Update User
-                      </button>
-                    </form>
-                  </li>
-                </ul>
-              </div>
-            </td>
-            <td>
-              <form method="post" action="/admin/delete/<%= users._id %>">
-                <button type="submit" class="btn btn-danger btn-padding">
-                  Delete
-                </button>
-              </form>
-            </td>
-          </tr>
-          <% num = num+1%> <% }) %>
-        </tbody>
-      </table>
+    <div class="mainContainer">
+      <div class="rows adminpanel">
+        <div class="column"><a class="dashboardlinks" href="#">DASHBOARD</a></div>
+        <div class="column"><a class="dashboardlinks" href="/admin/adminproduct">PRODUCTS</a></div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/adminCategories">CATEGORIES</a>
+        </div>
+        <div class="column"><a class="dashboardlinks" href="/admin/adminOrderdetails">ORDERS</a></div>
+        <div class="column"><a class="dashboardlinks" href="#">COUPONDS</a></div>
+        <div class="column"><a class="dashboardlinks" href="#">CUSTOMERS</a></div>
+        <div class="logout-container">
+          <form action="/user/logout?_method=DELETE" method="post">
+            <button class="logout-btn btn-secondary" type="submit">
+              Log Out
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="container" style="background-color: rgb(236, 236, 243)">
+        <table class="table caption-top">
+          <div class="list-container">
+            <div>
+              <caption class="h3">
+                List of users
+              </caption>
+            </div>
+          </div>
+          <thead>
+            <tr>
+              <th scope="col">S.No</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last NAME</th>
+              <th scope="col">Email</th>
+              <th scope="col">Contact Number</th>
+              <th scope="col">Block User</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let num = 1 ;%> <% user.forEach((users) =>{ %>
+            <tr>
+              <th scope="row"><%=num%></th>
+              <td><%= users.firstname %></td>
+              <td><%= users.lastname %></td>
+              <td><%= users.email %></td>
+              <td><%= users.contactnumber %></td>
+              <td>
+                <div class="form-check form-switch">
+                  <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="flexSwitchCheck<%= users._id %>"
+                  data-isblocked="<%= users.isBlocked %>"
+                  data-userid="<%= users._id %>"
+                  <% if (users.isBlocked) { %>checked<% } %>
+                />
+                
+              </td>
+            </tr>
+            <% num = num+1%> <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <script
@@ -190,16 +95,30 @@
     ></script>
     <script>
       function populateUpdateForm(userId, name, email) {
-        // Get the form fields by their IDs
         const updateNameField = document.getElementById(`updateName${userId}`);
         const updateEmailField = document.getElementById(
           `updateEmail${userId}`
         );
 
-        // Set the values of the form fields with user data
         updateNameField.value = name;
         updateEmailField.value = email;
       }
+      const checkboxes = document.querySelectorAll(".form-check-input");
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", async (event) => {
+          const userId = event.target.getAttribute("data-userid");
+          const isBlocked =
+            event.target.getAttribute("data-isblocked") === "true"; // Parse the value as a boolean
+
+          try {
+            const response = await fetch(`/admin/blockUser/${userId}`);
+            
+          } catch (error) {
+            console.log("error", error);
+          }
+        });
+      });
     </script>
   </body>
 </html>

@@ -16,51 +16,58 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="adminproductpage.css" />
+    <link rel="stylesheet" href="/adminproductpage.css" />
     <title>Admin Products Page</title>
   </head>
   <body style="background-color: rgb(236, 236, 243)">
-    <div class="logout-container">
-      <form action="/logout?_method=DELETE" method="post">
-        <button class="logout-btn btn-secondary" type="submit">Log Out</button>
-      </form>
-    </div>
     <div class="mainContainer">
       <div class="rows adminpanel">
-        <div class="column">DASHBOARD</div>
-        <div class="column">PRODUCTS</div>
-        <div class="column">CATEGORIES</div>
-        <div class="column">ORDERS</div>
-        <div class="column">COUPONDS</div>
-        <div class="column">CUSTOMERS</div>
+        <div class="column"><a class="dashboardlinks " href="#">DASHBOARD</a></div>
+        <div class="column"><a class="dashboardlinks " href="#">PRODUCTS</a></div>
+        <div class="column">
+          <a class="dashboardlinks "  href="/admin/adminCategories">CATEGORIES</a>
+        </div>
+        <div class="column"><a class="dashboardlinks " href="/admin/adminOrderdetails">ORDERS</a></div>
+        <div class="column"><a class="dashboardlinks " href="#">COUPONDS</a></div>
+        <div class="column"><a class="dashboardlinks " href="/admin/">CUSTOMERS</a></div>
+        <div class="logout-container">
+          <form action="/admin/adminProducts/logout" method="post">
+            <button class="logout-btn btn-secondary" type="submit">
+              Log Out
+            </button>
+          </form>
+        </div>
       </div>
 
       <div class="container" style="background-color: rgb(236, 236, 243)">
-        <h1 class="text-start heading-primary">PRODUCTS</h1>
+        
+
         <table class="table caption-top">
           <div class="addcontainer">
-            <div class="h3">LIST OF PRODUCTS</div>
-            <div class="searchbox">
-              <form class="d-flex" role="search">
+            <div class="h5">LIST OF PRODUCTS</div>
+            <div class="searchbox d-flex">
+              <form id="searchForm" method="GET" class="d-flex" role="search">
                 <input
+                  id="searchInput"
+                  name="query"
                   class="form-control me-2"
                   type="search"
                   placeholder="Search"
                   aria-label="Search"
                 />
-                <button class="btn btn-outline-success" type="submit">
+                <button class="btn btn-outline-success btnSearch" type="submit">
                   Search
                 </button>
               </form>
             </div>
             <!-- addproducts -->
-            <button class="btn btn-success dropdown-toggle btn-padding">
-              Add
+            
+              <a href="/admin/add-product"><button class="btn btn-success button">Add Product</button></a>
             </button>
           </div>
           <thead>
             <tr>
-              <th scope="col">#</th>
+              <th scope="col">S.NO</th>
               <th scope="col">PRODUCT NAME</th>
               <th scope="col">CATEGORY</th>
               <th scope="col">PRICE</th>
@@ -71,7 +78,7 @@
               <th scope="col">DELETE</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="productTableBody">
             <% let num = 1 ;%> <% products.forEach((product) =>{ %>
             <tr>
               <th scope="row"><%=num%></th>
@@ -95,7 +102,7 @@
                   <!-- UPDATE -->
                   <div class="dropdown">
                     <button
-                      class="btn btn-info dropdown-toggle btns"
+                      class="btn btn-info dropdown-toggle btns button"
                       type="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -110,7 +117,7 @@
                           method="post"
                           action="/admin/update/<%= product._id %>"
                         >
-                          <!-- Use unique form identifiers for each user -->
+                          <!-- Use unique form identifiers for each user
                           <label
                             class="formpd pdright"
                             for="updateName<%= product._id %>"
@@ -148,13 +155,13 @@
                             id="updatePassword<%= product._id %>"
                             name="updatePassword"
                             required
-                          /><br />
+                          /><br /> -->
 
                           <!-- Remove isAdmin checkbox for individual user updates -->
 
-                          <button class="btn-padding btn-padding" type="submit">
+                          <!-- <button class="btn-padding btn-padding" type="submit">
                             Update User
-                          </button>
+                          </button> -->
                         </form>
                       </li>
                     </ul>
@@ -163,8 +170,11 @@
                 </div>
               </td>
               <td>
-                <form method="post" action="/admin/delete/<%= product._id %>">
-                  <button type="submit" class="btn btn-danger btns">
+                <form
+                  method="post"
+                  action="/admin/adminProducts/delete/<%= product._id %>"
+                >
+                  <button type="submit" class="btn btn-danger btns button">
                     Delete
                   </button>
                 </form>
@@ -172,9 +182,27 @@
             </tr>
             <% num = num+1%> <% }) %>
           </tbody>
+           
         </table>
+        <div id="pagination">
+          <ul class="pagination">
+            <% if (currentPage > 1) { %>
+              <li class="page-item"><a  class="page-link" href="/admin/adminproduct?page=<%= currentPage - 1 %>">Previous</a></li>
+            <% } %>
+        
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li <% if (currentPage === i) { %>class="active page-item"<% } %>>
+                <a class="page-link"  href="/admin/adminproduct?page=<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+        
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item"><a  class="page-link" href="/admin/adminproduct?page=<%= currentPage + 1 %>">Next</a></li>
+            <% } %>
+          </ul>
+        </div>
       </div>
-      <div></div>
+      
     </div>
 
     <script
@@ -194,6 +222,123 @@
         updateNameField.value = name;
         updateEmailField.value = email;
       }
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+        const productTableBody = document.getElementById("productTableBody"); // Added an ID to the existing product table body
+        const paginationBody = document.getElementById("pagination")
+        searchForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const query = searchInput.value;
+
+          // Use AJAX to send a search request to the server
+          try {
+            const response = await fetch(`/admin/search?query=${query}`);
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+console.log(data);
+            // Clear the existing products from the table body
+            productTableBody.innerHTML = "";
+            paginationBody.innerHTML="";
+          
+            let num = 1;
+            data.results.forEach((product) => {
+              // Create and append a new row for each search result
+              const row = document.createElement("tr");
+              row.innerHTML = ` <th scope="row">${num}</th>
+                <td>
+                  <div class="productname">
+                    <img
+                      class="productimg"
+                      src="${product.productImages[0]}"
+                      alt=""
+                    />
+                    <p>${product.productName}</p>
+                  </div>
+                </td>
+                <td>${product.productCategory}</td>
+                <td>${product.productPrice}</td>
+                <td>${product.productStock}</td>
+                <td>active</td>
+                <td>
+                  <div class="action">
+                    <!-- UPDATE -->
+                    <div class="dropdown">
+                      <button
+                        class="btn btn-info dropdown-toggle btns"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        onclick="populateUpdateForm('${product._id}', '${product.productName}', '${product.productCategory}')"
+                      >
+                        Update
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <form
+                            class="dropdown-item"
+                            method="post"
+                            action="/admin/update/${product._id}"
+                          >
+                            <!-- Your form fields go here -->
+                          </form>
+                        </li>
+                      </ul>
+                    </div>
+                    <!-- DELETE -->
+                  </div>
+                </td>
+                <td>
+                  <form
+                    method="post"
+                    action="/admin/adminProducts/delete/${product._id}"
+                  >
+                    <button type="submit" class="btn btn-danger btns">
+                      Delete
+                    </button>
+                  </form>
+                </td>
+              `;
+              num = num + 1;
+              productTableBody.appendChild(row);
+            });
+      //       const paginationHTML = generatePaginationLinks(data.currentPage, data.totalPages, data.query);
+            
+
+
+          } catch (error) {
+            console.error("Error performing search:", error);
+          }
+        });
+
+      });
+      function generatePaginationLinks(currentPage, totalPages, query) {
+  let paginationHTML = `<ul class="pagination">`;
+
+  if (currentPage > 1) {
+    paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/search?query=${query}&page=${currentPage - 1}">Previous</a></li>`;
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (currentPage === i) {
+      paginationHTML += `<li class="active page-item"><a class="page-link" href="/admin/search?query=${query}&page=${i}">${i}</a></li>`;
+    } else {
+      paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/search?query=${query}&page=${i}">${i}</a></li>`;
+    }
+  }
+
+  if (currentPage < totalPages) {
+    paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/search?query=${query}&page=${currentPage + 1}">Next</a></li>`;
+  }
+
+  paginationHTML += `</ul>`;
+  return paginationHTML;
+}
+
     </script>
   </body>
 </html>

@@ -21,6 +21,11 @@ const productSchema = new Schema({
   productImages: {
     type: [String],
   },
+  count: Number,
+  totalProductCount: {
+    type: Number,
+    default: 1,
+  },
 });
 
 module.exports = mongoose.model("addproducts", productSchema);

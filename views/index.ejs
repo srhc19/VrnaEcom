@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Rubik:wght@300;400&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="/index.css" />
     <title>Main Page</title>
   </head>
   <body>
@@ -30,10 +30,12 @@
               <h5>ABOUT</h5>
             </div>
             <div class="nav-sec">
+              <h5><ion-icon name="heart-outline"></ion-icon></h5>
               <h5><ion-icon name="search-outline"></ion-icon> </h5>
-              <h5><ion-icon name="person-outline"></ion-icon></h5>
-              <h5><ion-icon name="cart-outline"></ion-icon></h5>
-              <h5><form action="/logout?_method=DELETE" method="post">
+              <h5><a  class="icons" href="/user/userprofile"><ion-icon name="person-outline"></ion-icon></a></h5>
+              <h5><a class="icons" href="/user/usercart"><ion-icon name="cart-outline"></ion-icon></a></h5>
+
+              <h5><form action="/user/logout?_method=DELETE" method="post">
                 <button class="logout-btn" type="submit">Log Out</button>
               </form></h5>
               </div>
@@ -50,27 +52,28 @@
       </div>
       <div class="shoptheLook">SHOP THE LOOK
       </div>
-      <img class="mainimg2" src="./images/main-img2.webp" alt="men in gym">
-      <h3 class="titleOldSchool">The lifting collection <br>that combines old school fits <br>with new school features.</h3>
+      <img class="mainimg2" src="/images/main-img2.webp" alt="men in gym">
+      <!-- <h3 class="titleOldSchool">The lifting collection <br>that combines old school fits <br>with new school features.</h3> -->
     
 
 <div class="container">
   <div class="container text-center cardContainer">
-    <div class="row">
+    <div class="row ">
       <% for (let i = 0; i < products.length; i++) { %>
         <% if (i % 5 === 0) { %>
-          </div><div class="row">
+          </div><div class="row row-container">
         <% } %>
         <div class="col">
           <div class="card" style="width: 18rem;">
-            <img src="<%= products[i].productImages %>" class="card-img-top" alt="<%= products[i].productName %>">
+            <img src="<%= products[i].productImages[0] %>" class="card-img-top" alt="<%= products[i].productName %>">
             <div class="card-body">
               <h5 class="card-title"><%= products[i].productName %></h5>
-              <p class="card-text"><%= products[i].description %></p>
+              <p class="card-text">discription</p>
+              <p class="card-text">$<%= products[i].productPrice %></p>
               <div class="link-container">
-                <a href="/product" class="btn btn-Buynow">Buy Now</a>
+                <a href="/admin/product/<%=products[i]._id%>" class="btn btn-Buynow">Buy Now</a>
                 <a class="card-icon" href="#"><ion-icon name="heart-outline"></ion-icon></a>
-                <a class="card-icon" href="#"><ion-icon name="cart-outline"></ion-icon></a>
+                <a class="card-icon" href="/user/addToCartBtn/<%=products[i]._id%>"><ion-icon name="cart-outline"></ion-icon></a>
               </div>
             </div>
           </div>

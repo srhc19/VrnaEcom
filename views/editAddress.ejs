@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Rubik:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/editaddress.css" />
+
+    <title>Edit Address Page</title>
+  </head>
+  <body>
+    <div class="container nav-container">
+      <div class="nav-main">
+        <h2 class="navmain-heading">VRNA</h2>
+        <h5>SHOP</h5>
+        <h5>CONTACT</h5>
+        <h5>ABOUT</h5>
+      </div>
+      <div class="nav-sec">
+        <h5><ion-icon name="search-outline"></ion-icon> </h5>
+        <h5><ion-icon name="person-outline"></ion-icon></h5>
+        <h5><ion-icon name="cart-outline"></ion-icon></h5>
+        </div>
+    </h5>
+    </div>
+    <div class="container">
+
+     
+      <h3>Edit Addresses</h3>
+   
+        <div class="main-container ">
+
+        
+        <% for (let i = 0; i < user.address.length; i++) { %>
+          <div class="address-container d-flex g-3 align-content-start justify-content-around">
+            <h4>Address <%= i + 1 %></h4>
+       <div>     <p>House Address: <%= user.address[i]?.houseaddress||"" %></p>
+        <p>Locality: <%= user.address[i]?.addressLocality ||"" %></p>
+        <p>City: <%= user.address[i]?.addressCity  ||""%></p>
+        <p>State: <%= user.address[i]?.addressState ||"" %></p>
+        <p>Postal Code: <%= user.address[i]?.postalCode ||"" %></p>
+        <p>Country: <%= user.address[i]?.addressCountry ||"" %></p></div>
+     
+         
+         
+            
+           
+            
+            <!-- Buttons for updating and deleting the address -->
+          
+           
+              <div class="dropdown">
+                <button
+                  class="btn btn-info dropdown-toggle btn-padding"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+           
+                >
+                  Update
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <form
+                      class="dropdown-item"
+                      action="/user/updateAddress" method="post"
+                    >
+                    <input type="hidden" name="selectedAddressIndex" value="<%= i %>">
+                      <!-- Use unique form identifiers for each user -->
+                      <label class="formpd pdright" for="houseaddress"
+                        >House Address :</label
+                      >
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="houseaddress"
+                        name="houseaddress"
+                        required
+                      /><br />
+                      <label class="formpd pdright" for="addressLocality"
+                        >Address Locality:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="addressLocality"
+                        name="addressLocality"
+                        required
+                      /><br />
+
+                      <label class="formpd pdright" for="addressCity">Address City:</label>
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="addressCity"
+                        name="addressCity"
+                        required
+                      /><br />
+
+                      <label class="formpd" for="addressState"
+                        >Address State:</label
+                      >
+                      <input
+                        class="formpd"
+                        type="text"
+                        id="addressState"
+                        name="addressState"
+                        required
+                      /><br />
+
+                      <label class="formpd" for="postalCode"
+                      >Postal Code:</label
+                    >
+                    <input
+                      class="formpd"
+                      type="text"
+                      id="postalCode"
+                      name="postalCode"
+                      required
+                    /><br />
+                    <label class="formpd" for="addressCountry"
+                    >Address country:</label
+                  >
+                  <input
+                    class="formpd"
+                    type="text"
+                    id="addressCountry"
+                    name="addressCountry"
+                    required
+                  /><br />
+
+                      <button class="btn-padding btn-padding" type="submit">
+                        Update User
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+          
+            
+         <div>   <form action="/user/deleteAddress" method="post">
+          <input type="hidden" name="selectedAddressIndex" value="<%= i %>">
+          <button type="submit" class="btn btn-danger">Remove</button>
+        </form></div>
+          </div>
+          <hr>
+        <% } %>
+      </div>
+
+    </div>
+    <footer>
+      <div class="text-center footer-container">
+        <div class="container">
+          <div class="container row">
+            <div class="col">
+              <ul class="footerul">
+                <li><h1 class="heading-footer footer-link">VRNA</h1></li>
+                <li class="footer-link">
+                  <p>
+                    Workout Clothes designed to help you become your personal
+                    best. Because when it comes to performing at your max, there
+                    should be no obstacles – least of all your workout clothes.
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div class="col">
+              <ul class="footerul">
+                <li><a class="footer-link" href="#">SHOPPING</a></li>
+                <li><a class="footer-link" href="#">SALES</a></li>
+              </ul>
+            </div>
+            <div class="col">
+              <ul class="footerul">
+                <li><a class="footer-link" href="#">SHOPPING</a></li>
+                <li><a class="footer-link" href="#">Contact Us</a></li>
+                <li><a class="footer-link" href="#">Payment Method</a></li>
+                <li><a class="footer-link" href="#">Delivery</a></li>
+              </ul>
+            </div>
+            <div class="col">
+              <ul class="footerul">
+                <li><a class="footer-link" href="#">NEWSLETTER</a></li>
+                <li class="footer-link">
+                  <p>
+                    Be the first to know about new arrivals, look books, sales &
+                    promos
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <br />
+        <p class="copyright">Copyright © 3333 All rights reserved | VRNA</p>
+      </div>
+    </footer>
+  
+   
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

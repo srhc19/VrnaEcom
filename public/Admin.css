@@ -15,20 +15,26 @@ html {
   font-size: 4rem;
 }
 th {
-  font-size: 2rem;
+  font-size: 1.6rem;
   background-color: rgb(236, 236, 243);
 }
 td {
-  font-size: 2rem;
+  font-size: 1.6rem;
   background-color: rgb(236, 236, 243);
 }
-.logout-btn {
+/* .logout-btn {
   position: absolute;
   right: 5%;
   font-size: 1.8rem;
   font-weight: 500;
   padding: 0.5rem 1.5rem;
   border-radius: 9px;
+} */
+.logout-btn {
+  padding: 0.3rem 0.6rem;
+  background-color: #3d352f;
+  color: azure;
+  border-radius: 4px;
 }
 .formpd {
   margin-bottom: 1.5rem;
@@ -40,4 +46,48 @@ td {
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
   border-radius: 6px;
+}
+.container {
+  /* max-width: 600px; */
+  margin: 2rem auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.adminpanel {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin: 2rem 2rem 0;
+  gap: 1rem;
+  font-size: 1.8rem;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+}
+
+.mainContainer {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  gap: 0.5rem;
+  padding: 2rem;
+}
+.list-container {
+  display: flex;
+  justify-content: space-between;
+}
+/* dashboard */
+.dashboardlinks {
+  text-decoration: none;
+  color: black;
+}
+
+.dashboardlinks:hover,
+.dashboardlinks:active {
+  text-decoration: underline;
+  color: black;
 }
