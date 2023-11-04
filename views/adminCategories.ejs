@@ -54,8 +54,10 @@
           <div class="addcontainer">
             <div class="h5">LIST OF CATEGORIES</div>
             <div class="searchbox">
-              <form class="d-flex" role="search">
+              <form id="searchForm" method="GET" class="d-flex" role="search">
                 <input
+                  id="searchInput"
+                  name="query"
                   class="form-control me-2"
                   type="search"
                   placeholder="Search"
@@ -126,7 +128,7 @@
               <th scope="col">DELETE</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="productTableBody">
             <% let num = 1 ;%> <% categories.forEach((category) =>{ %>
             <tr>
               <th scope="row"><%=num%></th>
@@ -234,6 +236,91 @@
         updateNameField.value = name;
         updateEmailField.value = email;
       }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+        const productTableBody = document.getElementById("productTableBody");
+
+        searchForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const query = searchInput.value;
+
+          try {
+            const response = await fetch(
+              `/admin/searchCategory?query=${query}`
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            productTableBody.innerHTML = ""; // Clear the table body
+
+            let num = 1;
+            data.results.forEach((category) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+          <th scope="row">${num}</th>
+          <td>
+            <div class="productname">
+              <p>${category.categoryName}</p>
+            </div>
+          </td>
+          <td>${category.isActive}</td>
+          <td>
+            <!-- UPDATE -->
+            <div class="dropdown">
+              <button
+                class="btn btn-info dropdown-toggle btns button"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                onclick="populateUpdateForm('${category._id}', '${category.categoryName}')"
+              >
+                Update
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <form
+                    class="dropdown-item"
+                    method="post"
+                    action="/admin/adminCategories/update/${category._id}"
+                  >
+                    <div class="d-flex flex-column">
+                      <label class="formpd pdright" for="name">Category Name:</label>
+                      <input class="formpd" type="text" id="categoryName" name="categoryName" required />
+                    </div>
+                    <div class="d-flex flex-column">
+                      <label class="formpd pdright" for="email">Is Active:</label>
+                      <input class="formpd" type="text" id="isActive" name="isActive" required />
+                    </div>
+                    <button class="btn-padding btn-padding button" type="submit">
+                      Update User
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+            <!-- DELETE -->
+          </td>
+          <td>
+            <form method="post" action="/admin/adminCategories/delete/${category._id}">
+              <button type="submit" class="btn btn-danger btns button">
+                Delete
+              </button>
+            </form>
+          </td>
+        `;
+              num += 1;
+              productTableBody.appendChild(row);
+            });
+          } catch (error) {
+            console.error("Error performing search:", error);
+          }
+        });
+      });
     </script>
   </body>
 </html>

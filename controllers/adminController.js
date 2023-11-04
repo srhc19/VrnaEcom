@@ -4,8 +4,9 @@ const multer = require("multer");
 const path = require("path");
 const Product = require("../models/addproducts");
 const OrderModel = require("../models/order");
+const category = require("../models/category");
 
-const ITEMS_PER_PAGE = 3;
+let ITEMS_PER_PAGE = 3;
 // For handling file uploads
 
 const addProductsModel = require("../models/addproducts");
@@ -202,19 +203,18 @@ async function adminProduct(req, res) {
 
       const totalProductsCount = await addProductsModel.countDocuments();
 
-      // Calculate the total number of pages based on the total products and items per page
       const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
-      if (currentPage > 1) {
-        num = ITEMS_PER_PAGE * currentPage;
-      } else {
-        num = 1;
-      }
-
+      // if (page > 1) {
+      //   number = ITEMS_PER_PAGE * page;
+      // } else {
+      //   number = 1;
+      // }
+      const number = (page - 1) * ITEMS_PER_PAGE + 1;
       res.render("adminproductpage", {
         products,
         currentPage: page,
         totalPages,
-        num,
+        number,
       });
     } else {
       res.send("You are not an admin");
@@ -318,19 +318,14 @@ async function adminDeleteProducts(req, res) {
 async function search(req, res) {
   try {
     if (req.session.user.isAdmin) {
-      const query = req.query.query; // user's search query
+      const query = req.query.query;
       const page = parseInt(req.query.page) || 1;
       const skip = (page - 1) * ITEMS_PER_PAGE;
-      console.log(req.query.page);
-      console.log(query);
 
-      console.log(skip);
-      // Check if the query is empty or undefined
       if (!query) {
         return res.status(400).json({ error: "Invalid search query" });
       }
 
-      // Perform a case-insensitive search using regular expressions
       const searchResults = await Product.find({
         $or: [
           { productName: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product name
@@ -365,6 +360,89 @@ async function search(req, res) {
   }
 }
 
+async function searchorder(req, res) {
+  try {
+    if (req.session.user.isAdmin) {
+      const query = req.query.query;
+      const page = parseInt(req.query.page) || 1;
+      const skip = (page - 1) * ITEMS_PER_PAGE;
+
+      if (!query) {
+        return res.status(400).json({ error: "Invalid search query" });
+      }
+
+      const searchResults = await OrderModel.find({
+        $or: [
+          { userName: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product name
+          { OrderedState: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product description
+        ],
+      })
+        .skip(skip)
+        .limit(ITEMS_PER_PAGE);
+
+      //total pages
+      const totalProductsCount = await Product.find({
+        $or: [
+          { productName: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product name
+          { productCategory: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product description
+        ],
+      }).countDocuments();
+
+      const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
+
+      // Return the search results as JSON
+
+      res.json({
+        results: searchResults,
+        currentPage: page,
+        totalPages,
+        query,
+      });
+    }
+  } catch (error) {
+    console.error("Error performing search:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+async function searchCategory(req, res) {
+  try {
+    if (req.session.user.isAdmin) {
+      const query = req.query.query;
+      const page = parseInt(req.query.page) || 1;
+      const skip = (page - 1) * ITEMS_PER_PAGE;
+
+      if (!query) {
+        return res.status(400).json({ error: "Invalid search query" });
+      }
+
+      const searchResults = await category.find({
+        $or: [{ categoryName: { $regex: new RegExp(query, "i") } }],
+      });
+
+      //total pages
+      const totalProductsCount = await Product.find({
+        $or: [
+          { productName: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product name
+          { productCategory: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product description
+        ],
+      }).countDocuments();
+
+      const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
+      console.log(totalPages);
+      // Return the search results as JSON
+
+      res.json({
+        results: searchResults,
+        currentPage: page,
+        totalPages,
+        query,
+      });
+    }
+  } catch (error) {
+    console.error("Error performing search:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 async function blockUser(req, res) {
   const userId = req.params.userId;
   try {
@@ -393,20 +471,115 @@ async function blockUser(req, res) {
 
 async function adminOrderdetails(req, res) {
   try {
-    console.log("hey");
-    const orders = await OrderModel.find();
+    const page = parseInt(req.query.page) || 1;
+    ITEMS_PER_PAGE = 3;
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+    const orders = await OrderModel.find().skip(skip).limit(ITEMS_PER_PAGE);
+    console.log(orders);
     const userId = orders.map((order) => order.userId);
     const users = await UserModel.find({ _id: { $in: userId } });
 
-    console.log(orders);
-    console.log(userId);
-    console.log(users);
-    res.render("adminorderdetails", { users, orders });
+    const totalProductsCount = await addProductsModel.countDocuments();
+
+    const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
+    const number = (page - 1) * ITEMS_PER_PAGE + 1;
+    res.render("adminorderdetails", {
+      users,
+      orders,
+      currentPage: page,
+      totalPages,
+      number,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
+async function updateProduct(req, res) {
+  try {
+    const productId = req.params.id;
 
+    const product = await Product.findById({ _id: productId });
+    if (!product) {
+      res.status(500).json({ error: "product not found" });
+    }
+    req.session.updateproductId = productId;
+    res.render("adminupdateproducts", { product });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+async function postUpdateProduct(req, res) {
+  try {
+    const productId = req.params.id;
+
+    // Find the existing product by its ID
+    let existingProduct = await Product.findById(productId);
+
+    if (!existingProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Construct an update object based on request data
+    const updateData = {};
+    if (req.body.productName) {
+      updateData.productName = req.body.productName;
+    }
+    if (req.body.productCategory) {
+      updateData.productCategory = req.body.productCategory;
+    }
+    if (req.body.productPrice) {
+      updateData.productPrice = req.body.productPrice;
+    }
+    if (req.body.productStock) {
+      updateData.productStock = req.body.productStock;
+    }
+    if (req.files && req.files.length > 0) {
+      updateData.$push = {
+        productImages: {
+          $each: req.files.map((file) => `/${file.filename}`),
+        },
+      };
+    }
+
+    // Update the product with the new data
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      updateData,
+      { new: true }
+    );
+
+    // Assuming you have successfully updated the product
+    req.flash("success", "Product Updated Successfully");
+    res.redirect("/admin/adminproduct");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+async function updateremoveimg(req, res) {
+  try {
+    const index = req.params.index;
+    const productId = req.session.updateproductId;
+
+    const product = await Product.findById({ _id: productId });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    if (index >= 0 && index < product.productImages.length) {
+      product.productImages.splice(index, 1);
+
+      await Product.findByIdAndUpdate(productId, {
+        productImages: product.productImages,
+      });
+    }
+    res.redirect(`/admin/update/${productId}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
 module.exports = {
   adminDeleteUser,
   adminUpdateUser,
@@ -425,4 +598,9 @@ module.exports = {
   search,
   blockUser,
   adminOrderdetails,
+  updateProduct,
+  postUpdateProduct,
+  updateremoveimg,
+  searchCategory,
+  searchorder,
 };

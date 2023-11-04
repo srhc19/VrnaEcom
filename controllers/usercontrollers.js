@@ -445,6 +445,9 @@ async function checkout(req, res) {
   try {
     const userId = req.session.user._id.toString();
     const user = await cartModel.findOne({ userId });
+    const hsdcode = await bcrypt.hash("order", 10);
+
+    req.session.ordercode = hsdcode;
 
     if (user) {
       const productIds = user.productsInfo.map(
@@ -488,7 +491,8 @@ async function paymentSelection(req, res) {
     const productId = req.session.productId;
     const product = await Product.findById(productId);
     const userId = req.session.user._id.toString();
-
+    const hashedid = await bcrypt.hash("password", 10);
+    console.log(hashedid);
     const user = await UserModel.findOne({ _id: userId });
     if (product) {
       let deliveryCharge = 500;
@@ -502,15 +506,18 @@ async function paymentSelection(req, res) {
           productName: product.productName,
         },
       ];
-
+      req.session.orderid = hashedid;
       order = new orderModel({
         userId,
         userName: user.firstname,
         productsInfo: productInfo,
         Date: currentDate,
         OrderedState: "pending",
+        orderId: hashedid,
       });
+
       await order.save();
+
       res.render("payment&address", { user, totalPrice, price });
     } else {
       const usercart = await cartModel.findOne({ userId });
@@ -545,7 +552,9 @@ async function paymentSelection(req, res) {
           productsInfo: productInfo,
           Date: currentDate,
           OrderedState: "pending",
+          orderId: hashedid,
         });
+        req.session.orderid = hashedid;
         await order.save();
 
         res.render("payment&address", { user, totalPrice, price });
@@ -611,7 +620,7 @@ async function updateAddress(req, res) {
 async function deleteAddress(req, res) {
   try {
     const userId = req.session.user._id.toString(); // Get the user's ID from the session
-    const user = await UserModel.findOne({ _id: userId });
+    const user = await UserModel.findOne({ _id: userId }, {});
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -634,6 +643,68 @@ async function deleteAddress(req, res) {
     res.redirect("/user/editAddress"); // Redirect to the edit address page or any other appropriate page
   } catch (error) {
     console.error("Error deleting address:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function cancelOrder(req, res) {
+  try {
+    const orderId = req.session.orderid;
+    const order = await orderModel.findOneAndUpdate(
+      { orderId },
+      { OrderedState: "canceled" }
+    );
+    req.session.ordercode = null;
+    res.setHeader("Cache-Control", "no-store, max-age=0");
+    res.redirect("/user/");
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+function checkorderCanceled(req, res, next) {
+  if (req.session && req.session.ordercode) {
+    return next();
+  }
+  res.redirect("/user/");
+}
+
+async function registerresendotp(req, res) {
+  try {
+    const userId = req.session.user._id.toString();
+    console.log(userId);
+    const email = req.session.user.email;
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 5);
+
+    // Send the OTP email
+    const result = await sendOtpVerificationEmail(email);
+    await UserModel.findByIdAndUpdate(
+      { _id: userId },
+      { "otp.code": result.data.otp, "otp.expiresAt": expirationTime }
+    );
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function forgotpswresendotp(req, res) {
+  try {
+    const userId = req.session.user._id.toString();
+
+    const email = req.session.user.email;
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 5);
+
+    // Send the OTP email
+    const result = await sendOtpVerificationEmail(email);
+    await UserModel.findByIdAndUpdate(
+      { _id: userId },
+      {
+        "forgotpswcode.code": result.data.otp,
+        "forgotpswcode.expiresAt": expirationTime,
+      }
+    );
+  } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -666,4 +737,8 @@ module.exports = {
   updateAddress,
   deleteAddress,
   editAddress,
+  cancelOrder,
+  checkorderCanceled,
+  registerresendotp,
+  forgotpswresendotp,
 };

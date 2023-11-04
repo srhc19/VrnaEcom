@@ -55,7 +55,11 @@ router.get("/checkout", userController.checkout);
 
 router.get("/checkout/:productId", userController.checkoutProductDetails);
 
-router.get("/paymentSelection", userController.paymentSelection);
+router.get(
+  "/paymentSelection",
+  userController.checkorderCanceled,
+  userController.paymentSelection
+);
 
 router.get("/orderConfirmed", userController.orderConfirmed);
 router.get("/editAddress", userController.editAddress);
@@ -63,5 +67,9 @@ router.post("/updateAddress", userController.updateAddress);
 
 // Handle deleting an address
 router.post("/deleteAddress", userController.deleteAddress);
+
+router.get("/registerresendOtp", userController.registerresendotp);
+
+router.get("/forgotpswresendotp", userController.forgotpswresendotp);
 
 module.exports = router;

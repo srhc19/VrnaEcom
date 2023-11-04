@@ -54,8 +54,10 @@
           <div class="addcontainer">
             <div class="h3">Orders</div>
             <div class="searchbox">
-              <form class="d-flex" role="search">
+              <form id="searchForm" method="GET" class="d-flex" role="search">
                 <input
+                  id="searchInput"
+                  name="query"
                   class="form-control me-2"
                   type="search"
                   placeholder="Search"
@@ -73,11 +75,12 @@
               <th scope="col">User Name</th>
 
               <th scope="col">Date</th>
+              <th scope="col">status</th>
               <th scope="col">Product Name</th>
             </tr>
           </thead>
-          <tbody>
-            <% let num = 1 ;%> <% orders.forEach((order) =>{ %>
+          <tbody id="productTableBody">
+            <% let num = number ;%> <% orders.forEach((order) =>{ %>
             <tr>
               <th scope="row"><%=num%></th>
               <td>
@@ -88,7 +91,7 @@
               </td>
 
               <td><%= order.Date.toISOString().split('T')[0] %></td>
-
+              <td><%=order.OrderedState%></td>
               <td>
                 <% order.productsInfo.forEach((info)=>{%>
                 <ul>
@@ -100,6 +103,24 @@
             <% num = num+1%> <% }) %>
           </tbody>
         </table>
+        <div id="pagination">
+          <ul class="pagination">
+            <% if (currentPage > 1) { %>
+              <li class="page-item"><a  class="page-link" href="/admin/adminOrderdetails?page=<%= currentPage - 1 %>">Previous</a></li>
+            <% } %>
+        
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li <% if (currentPage === i) { %>class="active page-item"<% } %>>
+                <a class="page-link"  href="/admin/adminOrderdetails?page=<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+        
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item"><a  class="page-link" href="/admin/adminOrderdetails?page=<%= currentPage + 1 %>">Next</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
       </div>
       <div></div>
     </div>
@@ -110,6 +131,8 @@
       crossorigin="anonymous"
     ></script>
     <script>
+      const ITEMS_PER_PAGE =3 ;
+
       function populateUpdateForm(userId, name, email) {
         // Get the form fields by their IDs
         const updateNameField = document.getElementById(`updateName${userId}`);
@@ -121,6 +144,84 @@
         updateNameField.value = name;
         updateEmailField.value = email;
       }
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+        const productTableBody = document.getElementById("productTableBody");
+        let currentPage = 1;
+        searchForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const query = searchInput.value;
+
+          try {
+            const response = await fetch(`/admin/searchorder?query=${query}`);
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            console.log(data);
+            productTableBody.innerHTML = ""; // Clear the table body
+
+            let num = 1;
+            data.results.forEach((order) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+    <th scope="row">${num}</th>
+    <td>
+      <div class="productname">
+     
+        <p>${order.userName}</p>
+      </div>
+    </td>
+    <td> ${
+      order.Date ? new Date(order.Date).toISOString().split("T")[0] : "N/A"
+    }</td>
+    <td>${order.OrderedState}</td>
+    <td>
+      ${
+        order.productsInfo
+          ? order.productsInfo
+              .map((info) => info.productName.toLowerCase())
+              .join("<br>")
+          : "N/A"
+      }
+    </td>
+  `;
+              num += 1;
+              productTableBody.appendChild(row);
+            });
+            currentPage = data.currentPage;
+          } catch (error) {
+            console.error("Error performing search:", error);
+          }
+        });
+      });
+
+
+      function generatePaginationLinks(currentPage, totalPages, query) {
+  let paginationHTML = `<ul class="pagination">`;
+
+  if (currentPage > 1) {
+    paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/searchorder?query=${query}&page=${currentPage - 1}">Previous</a></li>`;
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (currentPage === i) {
+      paginationHTML += `<li class="active page-item"><a class="page-link" href="/admin/searchorder?query=${query}&page=${i}">${i}</a></li>`;
+    } else {
+      paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/searchorder?query=${query}&page=${i}">${i}</a></li>`;
+    }
+  }
+
+  if (currentPage < totalPages) {
+    paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/searchorder?query=${query}&page=${currentPage + 1}">Next</a></li>`;
+  }
+
+  paginationHTML += `</ul>`;
+  return paginationHTML;
+}
     </script>
   </body>
 </html>

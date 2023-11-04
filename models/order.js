@@ -28,6 +28,7 @@ const orderSchema = new Schema({
     type: String,
     default: "pending",
   },
+  orderId: String,
 });
 
 module.exports = mongoose.model("order", orderSchema);
