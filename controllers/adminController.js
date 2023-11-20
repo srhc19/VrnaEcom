@@ -6,7 +6,7 @@ const Product = require("../models/addproducts");
 const OrderModel = require("../models/order");
 const category = require("../models/category");
 
-let ITEMS_PER_PAGE = 3;
+let ITEMS_PER_PAGE = 4;
 // For handling file uploads
 
 const addProductsModel = require("../models/addproducts");
@@ -120,9 +120,10 @@ function checkAdminAuthenticated(req, res, next) {
   res.redirect("/user/login");
 }
 
-function addProducts(req, res) {
+async function addProducts(req, res) {
+  const categories = await categoryModel.find();
   const successMessage = req.flash("success");
-  res.render("addproducts", { successMessage: successMessage });
+  res.render("addproducts", { successMessage: successMessage, categories });
   // if (req.session.user.isActive) {
 
   // } else {
@@ -149,8 +150,13 @@ const upload = multer({ storage: storage });
 async function postAddProducts(req, res) {
   try {
     // Extract form data
-    const { productName, productCategory, productPrice, productStock } =
-      req.body;
+    const {
+      productName,
+      productCategory,
+      productPrice,
+      productStock,
+      productdescription,
+    } = req.body;
 
     const productImages = req.files.map((file) => `/${file.filename}`);
 
@@ -162,6 +168,7 @@ async function postAddProducts(req, res) {
       productStock,
       productImages,
       storage,
+      discription: productdescription,
     });
 
     // Save the product to the database
@@ -197,7 +204,7 @@ async function adminProduct(req, res) {
 
       // Query the database to get a subset of products based on pagination
       const products = await addProductsModel
-        .find()
+        .find({ isActive: true })
         .skip(skip)
         .limit(ITEMS_PER_PAGE);
 
@@ -241,12 +248,20 @@ async function adminCategories(req, res) {
 async function postAdminCategories(req, res) {
   try {
     const { categoryName, isActive } = req.body;
-    const newCategory = new categoryModel({
-      categoryName,
-      isActive,
+    const category = await categoryModel.findOne({
+      categoryName: categoryName,
     });
-    await newCategory.save();
-    res.redirect("/admin/adminCategories");
+    console.log(category);
+    if (category) {
+      res.redirect("/admin/adminCategories");
+    } else {
+      const newCategory = new categoryModel({
+        categoryName,
+        isActive,
+      });
+      await newCategory.save();
+      res.redirect("/admin/adminCategories");
+    }
   } catch (error) {
     res.status(500).json({ error: "server Error" });
   }
@@ -256,10 +271,11 @@ async function adminDeleteCategories(req, res) {
   const categoryId = req.params.categoryId;
 
   try {
-    // Find the user by ID and remove it from the database
-    await categoryModel.findByIdAndRemove(categoryId);
+    await categoryModel.findOneAndUpdate(
+      { _id: categoryId },
+      { isActive: "NotActive" }
+    );
 
-    // Redirect back to the admin page after deleting the user
     res.redirect("/admin/adminCategories");
   } catch (error) {
     console.error("Error deleting user:", error);
@@ -304,10 +320,11 @@ async function adminDeleteProducts(req, res) {
   const productId = req.params.productId;
 
   try {
-    // Find the user by ID and remove it from the database
-    await addProductsModel.findByIdAndRemove(productId);
+    const product = await Product.findOneAndUpdate(
+      { _id: productId },
+      { isActive: false }
+    );
 
-    // Redirect back to the admin page after deleting the user
     res.redirect("/admin/adminproduct");
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -373,7 +390,7 @@ async function searchorder(req, res) {
 
       const searchResults = await OrderModel.find({
         $or: [
-          { userName: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product name
+          { userName: { $regex: new RegExp(query, "i") } },
           { OrderedState: { $regex: new RegExp(query, "i") } }, // Case-insensitive search for product description
         ],
       })
@@ -471,16 +488,16 @@ async function blockUser(req, res) {
 
 async function adminOrderdetails(req, res) {
   try {
+    ITEMS_PER_PAGE = 5;
     const page = parseInt(req.query.page) || 1;
-    ITEMS_PER_PAGE = 3;
     const skip = (page - 1) * ITEMS_PER_PAGE;
     const orders = await OrderModel.find().skip(skip).limit(ITEMS_PER_PAGE);
     console.log(orders);
     const userId = orders.map((order) => order.userId);
     const users = await UserModel.find({ _id: { $in: userId } });
 
-    const totalProductsCount = await addProductsModel.countDocuments();
-
+    const totalProductsCount = await OrderModel.find().countDocuments();
+    console.log(totalProductsCount);
     const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
     const number = (page - 1) * ITEMS_PER_PAGE + 1;
     res.render("adminorderdetails", {
@@ -497,13 +514,13 @@ async function adminOrderdetails(req, res) {
 async function updateProduct(req, res) {
   try {
     const productId = req.params.id;
-
+    const categories = await categoryModel.find();
     const product = await Product.findById({ _id: productId });
     if (!product) {
       res.status(500).json({ error: "product not found" });
     }
     req.session.updateproductId = productId;
-    res.render("adminupdateproducts", { product });
+    res.render("adminupdateproducts", { product, categories });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -532,6 +549,10 @@ async function postUpdateProduct(req, res) {
     }
     if (req.body.productStock) {
       updateData.productStock = req.body.productStock;
+    }
+
+    if (req.body.productdescription) {
+      updateData.description = req.body.productdescription;
     }
     if (req.files && req.files.length > 0) {
       updateData.$push = {

@@ -29,6 +29,15 @@ const orderSchema = new Schema({
     default: "pending",
   },
   orderId: String,
+  paymentMode: {
+    type: String,
+    default: "Online Payment",
+  },
+  totalPrice: Number,
+  razorPayment_id: String,
+  razorpaymentStatus: String,
+  returnReason: String,
+  paymentStatus: String,
 });
 
 module.exports = mongoose.model("order", orderSchema);

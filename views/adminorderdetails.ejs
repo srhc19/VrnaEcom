@@ -35,7 +35,7 @@
           <a class="dashboardlinks" href="/admin/adminOrderdetails">ORDERS</a>
         </div>
         <div class="column">
-          <a class="dashboardlinks" href="#">COUPONDS</a>
+          <a class="dashboardlinks" href="/admin/adminCoupons">COUPONS</a>
         </div>
         <div class="column">
           <a class="dashboardlinks" href="/admin/">CUSTOMERS</a>
@@ -53,6 +53,7 @@
         <table class="table caption-top">
           <div class="addcontainer">
             <div class="h3">Orders</div>
+            <div><a class="ordermanagement_link" href="/admin//adminOrderManagement"><h6>Order Management</h6></a></div>
             <div class="searchbox">
               <form id="searchForm" method="GET" class="d-flex" role="search">
                 <input
@@ -77,10 +78,12 @@
               <th scope="col">Date</th>
               <th scope="col">status</th>
               <th scope="col">Product Name</th>
+              <th scope="col">Change Order Status</th>
+             
             </tr>
           </thead>
           <tbody id="productTableBody">
-            <% let num = number ;%> <% orders.forEach((order) =>{ %>
+            <% let num = number ;%> <%orders.forEach((order) =>{ %>
             <tr>
               <th scope="row"><%=num%></th>
               <td>
@@ -91,7 +94,7 @@
               </td>
 
               <td><%= order.Date.toISOString().split('T')[0] %></td>
-              <td><%=order.OrderedState%></td>
+              <td id="<%=order._id%>"><%=order.OrderedState%></td>
               <td>
                 <% order.productsInfo.forEach((info)=>{%>
                 <ul>
@@ -99,8 +102,24 @@
                 </ul>
                 <% })%>
               </td>
+              <td>
+                <% if (order.OrderedState !== "canceled" && order.OrderedState !== "Rejected" && order.OrderedState !== "Accepted") { %>
+                  <div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle change-status-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Change Status
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><button class="dropdown-item status-update-btn" data-order-id="<%= order._id %>" data-new-status="Packed">Packed</button></li>
+                      <li><button class="dropdown-item status-update-btn" data-order-id="<%= order._id %>" data-new-status="Shipped">Shipped</button></li>
+                      <li><button class="dropdown-item status-update-btn" data-order-id="<%= order._id %>" data-new-status="delivered">Delivered</button></li>
+                      <li><button class="dropdown-item status-update-btn" data-order-id="<%= order._id %>" data-new-status="Product Returned">Product Returned</button></li>
+                    </ul>
+                  </div>
+                <% } %>
+              </td>
+              
             </tr>
-            <% num = num+1%> <% }) %>
+            <% num = num+1 %> <% }) %>
           </tbody>
         </table>
         <div id="pagination">
@@ -120,6 +139,7 @@
             <% } %>
           </ul>
         </div>
+      
       </div>
       </div>
       <div></div>
@@ -222,6 +242,40 @@
   paginationHTML += `</ul>`;
   return paginationHTML;
 }
+
+document.querySelectorAll('.status-update-btn').forEach((button) => {
+  button.addEventListener('click', function () {
+    const orderId = this.getAttribute('data-order-id');
+    const newStatus = this.getAttribute('data-new-status');
+
+    fetch('/admin/updateOrderStatus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ orderId, newStatus }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to update order status');
+        }
+      })
+      .then((data) => {
+      
+        const orderStatusElement = document.getElementById(data.orderId);
+        if (orderStatusElement) {
+          orderStatusElement.textContent = data.newStatus;
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  });
+});
+
+
     </script>
   </body>
 </html>

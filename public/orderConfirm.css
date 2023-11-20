@@ -104,3 +104,13 @@ footer {
   align-items: center;
   gap: 1.2rem;
 }
+.btn-Buynow {
+  padding: 0.2rem 0.5rem;
+  background-color: #3d352f;
+  color: azure;
+  font-size: 1.2rem;
+}
+.btnLink {
+  color: white;
+  text-decoration: none;
+}

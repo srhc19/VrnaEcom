@@ -11,6 +11,7 @@ html {
 body {
   font-family: "Lora", serif;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 /* ******** */
@@ -94,6 +95,7 @@ h1 {
 /* ********* */
 .cardContainer {
   margin-top: 7rem;
+  position: relative;
 }
 .row-container {
   margin-bottom: 3rem;
@@ -163,4 +165,106 @@ h1 {
   padding: 1rem;
   border-radius: 80%;
   background-color: rgba(240, 248, 255, 0.348);
+}
+/* carticon */
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: rgba(238, 94, 94, 0.642);
+  color: black;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.main_Search_Container {
+  margin-top: 2rem;
+  background-color: #fff;
+  /* border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); */
+  max-width: 300px;
+}
+.search-results a {
+  text-decoration: none;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: black;
+  padding: 1rem;
+}
+/* search .search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+  width: 100%;
+  border-radius: 4px;
+} */
+
+.result-item {
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.result-item a {
+  text-decoration: none;
+  color: #333;
+}
+
+.result-item a:hover {
+  background-color: #f0f0f0;
+}
+.searchbox {
+  position: relative;
+}
+.search-results {
+  height: 100px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: center;
+}
+.category-link {
+  text-decoration: none;
+  color: #3d352f;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.category-link:hover,
+.category-link:active {
+  text-decoration: underline;
+}
+#shopnow:hover,
+#shopnow:active {
+  background-color: #b3aaa3;
+  color: black;
+}
+#shopnow {
+  color: #b3aaa3;
+}
+.nav__links {
+  text-decoration: none;
+  color: black;
+}
+.nav__links:hover,
+.nav__links:active {
+  text-decoration: underline;
+}
+.logout-btn:hover,
+.logout-btn:active {
+  color: rgb(5, 5, 5);
+  background-color: #b3aaa3;
+}
+.form-control {
+  font-size: 1.4rem;
 }

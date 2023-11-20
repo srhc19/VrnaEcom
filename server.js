@@ -10,7 +10,7 @@ const flash = require("express-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const nocache = require("nocache");
-
+const bodyParser = require("body-parser");
 app.use(nocache());
 
 const MongoDBSession = require("connect-mongodb-session")(session);
@@ -44,7 +44,8 @@ app.use(
     store: store,
   })
 );
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 //css
 app.use(express.static("public"));
 

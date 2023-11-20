@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const cartModel = require("../models/cart");
 const Product = require("../models/addproducts");
+const couponsModel = require("../models/coupons");
 
 const orderModel = require("../models/order");
 
@@ -42,15 +43,43 @@ const postLoginPage = async (req, res) => {
 };
 
 const displayMainPage = async function (req, res) {
-  // Prevent caching
   res.setHeader("Cache-Control", "no-store, max-age=0");
-  //if user is in session
+  req.session.ordercode = null;
+  // Coupon
+  req.session.couponCode = null;
+  req.session.couponapplied = null;
+  // const thirtyDaysFromNow = new Date();
+  // thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+
+  // let coupons = new couponsModel({
+  //   couponCode: "iiiiiH",
+  //   min: 50,
+  //   max: 1000,
+  //   ExpiryDate: thirtyDaysFromNow,
+  //   Discount: 20,
+  // });
+  // await coupons.save();
   if (req.session && req.session.user) {
     if (req.session.user.isAdmin) {
       res.redirect("/admin/");
     } else {
+      const userId = req.session.user._id.toString();
       const products = await Product.find();
-      res.render("index.ejs", { products });
+      let cartProductCount = 0;
+      for (const product of products) {
+        product.totalProductCount = 0;
+        await product.save();
+      }
+
+      const cart = await cartModel.findOne({ userId: userId });
+      if (cart) {
+        cartProductCount = cart.productsInfo.length;
+      }
+
+      res.render("index.ejs", {
+        products,
+        cartProductCount: cartProductCount,
+      });
     }
   } else {
     res.redirect("/user/login");
@@ -350,19 +379,47 @@ async function addToCartBtn(req, res) {
     // Convert userId to a string representing the ObjectId
     const userIdString = req.session.user._id.toString();
 
-    let user = await cartModel.findOne({ userId: userIdString });
+    let userCart = await cartModel.findOne({ userId: userIdString });
 
-    if (user) {
-      user.productsInfo.push({ productId });
-      await user.save();
-    } else {
-      // create a new cart
-      user = new cartModel({
+    let product = await Product.findOne({ _id: productId });
+    if (!userCart) {
+      userCart = new cartModel({
         userId: userIdString,
         productsInfo: [{ productId, isOrdered: false, count: 0 }],
       });
-      await user.save();
+    } else {
+      const productInfo = userCart.productsInfo.find(
+        (info) => info.productId == productId
+      );
+      if (productInfo) {
+        productInfo.count++;
+      } else {
+        userCart.productsInfo.push({ productId, isOrdered: false, count: 1 });
+      }
     }
+    await userCart.save();
+    // user.productsInfo.forEach((info) => {
+    //   if (info.productId == productId) {
+    //     id = productId;
+    //   }
+    // });
+
+    // if (user && product) {
+    //   product.totalProductCount += 1;
+    //   await product.save();
+    // }
+
+    // if (user) {
+    //   user.productsInfo.push({ productId });
+
+    //   await user.save();
+    // } else {
+    //   user = new cartModel({
+    //     userId: userIdString,
+    //     productsInfo: [{ productId, isOrdered: false, count: 0 }],
+    //   });
+    //   await user.save();
+    // }
 
     res.redirect("/user/");
   } catch (error) {
@@ -374,29 +431,32 @@ async function usercart(req, res) {
     const userIdString = req.session.user._id.toString();
 
     let user = await cartModel.findOne({ userId: userIdString });
+
     if (user) {
       const productIds = user.productsInfo.map(
         (productInfo) => productInfo.productId
       );
 
-      // Query the Product collection to retrieve product details based on IDs
       const products = await Product.find({ _id: { $in: productIds } });
 
-      // Loop through the products and update the count from user's cart
       for (const product of products) {
         const cartProductInfo = user.productsInfo.find(
           (info) => info.productId.toString() === product._id.toString()
         );
 
         if (cartProductInfo) {
-          // Update the product's count field
           product.count = cartProductInfo.count;
           await product.save();
         }
       }
+      let total = 0;
+      products.map((item, index) => {
+        total += item.productPrice * item.totalProductCount;
+      });
+      let deliveryCharge = 500;
+      const totalPrice = total + deliveryCharge;
 
-      // Render an EJS template with the retrieved product details
-      res.render("usercart.ejs", { products });
+      res.render("usercart.ejs", { products, total, totalPrice });
       // return res.status(404).json({ error: "User not found" });
     } else {
       res.redirect("/user/");
@@ -429,12 +489,50 @@ async function cartDeleteProduct(req, res) {
 async function updateProductCount(req, res) {
   try {
     const productId = req.params.productId;
-    const newCount = parseInt(req.body.count); // Get the updated count from the client
+    const newCount = req.body.count;
+    const userId = req.session.user._id.toString();
+    console.log(productId);
+    console.log(newCount);
+    // await Product.findByIdAndUpdate(productId, { totalProductCount: newCount });
+    const cartProducts = await cartModel.findOne({ userId });
+    cartProducts.productsInfo.forEach((info) => {
+      if (info.productId == productId) {
+        info.count = newCount;
+      }
+    });
 
-    // Update the product's totalProductCount field in the database
-    await Product.findByIdAndUpdate(productId, { totalProductCount: newCount });
+    cartProducts.save();
+    const productIds = cartProducts.productsInfo.map(
+      (productInfo) => productInfo.productId
+    );
+    const products = await Product.find({ _id: { $in: productIds } });
+    for (const productInfo of cartProducts.productsInfo) {
+      const product = products.find(
+        (p) => p._id.toString() === productInfo.productId.toString()
+      );
+      if (product) {
+        product.totalProductCount = productInfo.count;
+        await product.save();
+      }
+    }
 
-    res.status(200).json({ message: "Product count updated successfully" });
+    let total = 0;
+    products.map((item, index) => {
+      total += item.productPrice * item.totalProductCount;
+    });
+    let deliveryCharge = 500;
+    const totalPrice = total + deliveryCharge;
+
+    console.log(products);
+    console.log(total);
+    console.log(totalPrice);
+    res.status(200).json({
+      message: "Product count updated successfully",
+      newCount,
+      productId,
+      total,
+      totalPrice,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -448,12 +546,22 @@ async function checkout(req, res) {
     const hsdcode = await bcrypt.hash("order", 10);
 
     req.session.ordercode = hsdcode;
-
+    console.log(user);
     if (user) {
       const productIds = user.productsInfo.map(
         (productInfo) => productInfo.productId
       );
       const products = await Product.find({ _id: { $in: productIds } });
+      for (const productInfo of user.productsInfo) {
+        const product = products.find(
+          (p) => p._id.toString() === productInfo.productId.toString()
+        );
+        if (product) {
+          product.totalProductCount = productInfo.count;
+          await product.save();
+        }
+      }
+
       let total = 0;
       products.map((item, index) => {
         total += item.productPrice * item.totalProductCount;
@@ -492,7 +600,7 @@ async function paymentSelection(req, res) {
     const product = await Product.findById(productId);
     const userId = req.session.user._id.toString();
     const hashedid = await bcrypt.hash("password", 10);
-    console.log(hashedid);
+
     const user = await UserModel.findOne({ _id: userId });
     if (product) {
       let deliveryCharge = 500;
@@ -514,6 +622,7 @@ async function paymentSelection(req, res) {
         Date: currentDate,
         OrderedState: "pending",
         orderId: hashedid,
+        totalPrice,
       });
 
       await order.save();
@@ -553,6 +662,7 @@ async function paymentSelection(req, res) {
           Date: currentDate,
           OrderedState: "pending",
           orderId: hashedid,
+          totalPrice,
         });
         req.session.orderid = hashedid;
         await order.save();
@@ -564,13 +674,6 @@ async function paymentSelection(req, res) {
     console.log(error);
     res.status(500).send("An error occurred");
   }
-}
-
-async function orderConfirmed(req, res) {
-  const userId = req.session.user._id.toString();
-  req.session.productId = null;
-  const usercart = await cartModel.deleteOne({ userId });
-  res.render("orderConfirm");
 }
 
 async function editAddress(req, res) {
@@ -708,6 +811,18 @@ async function forgotpswresendotp(req, res) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+async function checkBlocked(req, res, next) {
+  const userId = req.session.user._id.toString();
+  const user = await UserModel.findOne({ _id: userId });
+
+  if (user.isBlocked) {
+    req.flash("error", "Your Account has been blocked by the admin");
+    return res.redirect("/user/login");
+  } else {
+    return next();
+  }
+}
 module.exports = {
   displayMainPage,
   loginPage,
@@ -733,7 +848,7 @@ module.exports = {
   checkout,
   checkoutProductDetails,
   paymentSelection,
-  orderConfirmed,
+
   updateAddress,
   deleteAddress,
   editAddress,
@@ -741,4 +856,5 @@ module.exports = {
   checkorderCanceled,
   registerresendotp,
   forgotpswresendotp,
+  checkBlocked,
 };

@@ -26,6 +26,14 @@ const productSchema = new Schema({
     type: Number,
     default: 1,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  discription: {
+    type: String,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("addproducts", productSchema);

@@ -146,7 +146,7 @@ h2 {
 }
 .productname {
   display: inline-flex;
-  max-width: 20rem;
+  max-width: 30rem;
   font-size: 1.4rem;
   align-items: center;
   font-weight: 500;
@@ -156,6 +156,7 @@ h2 {
 .productimg {
   max-width: 15%;
   max-height: 15%;
+  margin-left: 9rem;
 }
 .searchbox {
   display: flex;
@@ -182,4 +183,6 @@ h2 {
 }
 .cardContainer {
   font-size: 1.6rem;
+  max-width: 400px;
+  margin-left: 4rem;
 }

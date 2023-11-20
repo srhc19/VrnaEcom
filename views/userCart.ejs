@@ -42,7 +42,7 @@
             <table class="table caption-top">
               <div class="addcontainer">
               
-                <div class="searchbox">
+                <!-- <div class="searchbox">
                   <form id="searchForm" method="GET" class="d-flex" role="search">
                     <input
                       id="searchInput"
@@ -56,7 +56,7 @@
                       Search
                     </button>
                   </form>
-                </div>
+                </div> -->
                
               </div>
               <thead>
@@ -91,21 +91,23 @@
                   <td><%=product.productStock%></td>
     
                   <td><div class="countContainer">
-                    <button class="decrementBtn button"><ion-icon name="remove-outline"></ion-icon></button>
+                    <button class="decrementBtn button" ><ion-icon name="remove-outline"></ion-icon></button>
                    
-                    <div class="counter "><%= product.count %></div>
-                    <button class="incrementBtn button"><ion-icon name="add-outline"></ion-icon></button>
+                    <div class="counter " id="count<%=product._id%>"><%=product.count%></div>
+                    <button class="incrementBtn button" data-product-Count ="<%=product.count%>"><ion-icon name="add-outline"></ion-icon></button>
                   </div></td>
                   
                   <td>
-                    <form
+                    <!-- <form
                       method="GET"
                       action="/user/userCart/delete/<%= product._id %>"
                     >
                       <button type="submit" class="btn btn-danger btns">
                         REMOVE
                       </button>
-                    </form>
+                    </form> -->
+                    <!-- <button type="button" class="btn btn-danger btns removebtn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-productid ="<%= product._id %>">Remove</button> -->
+
                     <!-- <ul id="user-cart">
                 
                       <li>
@@ -113,7 +115,33 @@
                           <button class="remove-product" data-productid="">Remove</button>
                       </li> -->
                  
-                  </ul>
+                  <!-- </ul> -->
+                   <form     method="GET"
+                   action="/user/userCart/delete/<%= product._id %>">
+                                      <!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Remove 
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      Are you sure you want to move this item from the cart
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger" class="btn btn-danger btns removebtn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-productid ="<%= product._id %>">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+                   </form>
                   </td>
                 </tr>
                 <% num = num+1%> <% }) %>
@@ -132,9 +160,9 @@
 
 
           <h5 class="price-heading">PRICE DETAILS</h5>
-          <p class="pricedetailsp"><strong>Price : </strong><span id="price"> $546746</span></p>
+          <p class="pricedetailsp"><strong>Price : </strong><span id="price"> $<%=total%></span></p>
           <p class="pricedetailsp"><strong>Delivery Charge :</strong> <span id="deliveryCharge">$500</span>   </p>
-          <p  class="pricedetailsp"><strong>TotalPrice :</strong><span id="totalPrice">$500</span>  </p>
+          <p  class="pricedetailsp"><strong>TotalPrice :</strong><span id="totalPrice">$<%=totalPrice%></span>  </p>
                 <a href="/user/checkout" class="btn btn-Buynow">PROCEED TO CHECKOUT</a>
           </p>
         </div>
@@ -188,77 +216,116 @@
       </div>
     
     </footer>
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Confirm Removal</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to remove this product from your cart?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form id="removeProductForm" method="GET">
+            
+              <button type="submit" class="btn btn-danger">Remove</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>// Get all increment and decrement buttons by class name
  const incrementButtons = document.querySelectorAll(".incrementBtn");
 const decrementButtons = document.querySelectorAll(".decrementBtn");
 const counters = document.querySelectorAll(".counter");
-let count = 1;
+//  let count =1 ;
 
-function updateCounter(index) {
-  counters[index].textContent = count;
-}
-  
+// function updateCounter(index) {
+//   counters[index].textContent = count;
+// }
+
 incrementButtons.forEach((button, index) => {
   button.addEventListener("click", () => {
-    count++;
-    updateCounter(index);
-
-    // Find the closest parent <tr> element and retrieve the data-productid and data-price attributes
     const row = button.closest("tr");
     const productId = row.querySelector("td[data-productid]").getAttribute("data-productid");
     const productPrice = parseFloat(row.querySelector("td[data-price]").getAttribute("data-price"));
+    
+ 
+    const countElement = document.getElementById(`count${productId}`);
+    let count = Number(countElement.textContent);
 
-    // Calculate and display the product subtotal
+   
+    count++;
+    
+  
+    countElement.textContent = count;
+
     const productSubtotal = count * productPrice;
-    row.querySelector(".product-price").textContent = `$${productSubtotal}`;
+    // row.querySelector(".product-price").textContent = `$${productSubtotal}`;
 
-    // Perform any other necessary calculations (e.g., total price)
     countPrice();
 
-    // Make an AJAX request to update the totalProductCount on the server
-    $.ajax({
-      type: "POST",
-      url: `/user/update-product-count/${productId}`,
-      data: { count: count },
-      success: function (response) {
-        console.log(response.message);
+    
+    fetch(`/user/update-product-count/${productId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      error: function (error) {
-        console.error("Error updating product count:", error);
-      },
+      body: JSON.stringify({ count }),
+    }).then((response) => {
+      if (response.ok) {
+       
+        response.json().then(data=>{
+          document.querySelector("#price").textContent = data.total;
+          document.querySelector("#totalPrice").textContent = data.totalPrice;
+        })
+      
+      } else {
+        console.log("Error");
+      }
     });
   });
 });
 decrementButtons.forEach((button, index) => {
   button.addEventListener("click", () => {
+    const row = button.closest("tr");
+    const productId = row.querySelector("td[data-productid]").getAttribute("data-productid");
+    const productPrice = parseFloat(row.querySelector("td[data-price]").getAttribute("data-price"));
+
+   
+    const countElement = document.getElementById(`count${productId}`);
+    let count = Number(countElement.textContent);
+
     if (count > 1) {
       count--;
-      updateCounter(index);
 
-      // Find the closest parent <tr> element and retrieve the data-productid and data-price attributes
-      const row = button.closest("tr");
-      const productId = row.querySelector("td[data-productid]").getAttribute("data-productid");
-      const productPrice = parseFloat(row.querySelector("td[data-price]").getAttribute("data-price"));
+      countElement.textContent = count;
 
-      // Calculate and display the product subtotal
+
       const productSubtotal = count * productPrice;
-      row.querySelector(".product-price").textContent = `$${productSubtotal}`;
+      // row.querySelector(".product-price").textContent = `$${productSubtotal}`;
 
-      // Perform any other necessary calculations (e.g., total price)
       countPrice();
 
-      // Make an AJAX request to update the totalProductCount on the server
-      $.ajax({
-        type: "POST",
-        url: `/user/update-product-count/${productId}`,
-        data: { count: count },
-        success: function (response) {
-          console.log(response.message);
+ 
+      fetch(`/user/update-product-count/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        error: function (error) {
-          console.error("Error updating product count:", error);
-        },
+        body: JSON.stringify({ count }),
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then(data=>{
+          document.querySelector("#price").textContent = data.total;
+          document.querySelector("#totalPrice").textContent = data.totalPrice;
+        })
+        } else {
+          console.log("Error");
+        }
       });
     }
   });
@@ -266,64 +333,74 @@ decrementButtons.forEach((button, index) => {
 
 
 
+
     
   // Initial update for all counters
-  counters.forEach((counter, index) => {
-      updateCounter(index);
-  });
+  // counters.forEach((counter, index) => {
+  //     updateCounter(index);
+  // });
   const pricesDataElement = document.getElementById('prices-data');
   const pricesDataJSON = pricesDataElement.getAttribute('data-prices');
 
   // Parse the JSON data into a JavaScript array
   const prices = JSON.parse(pricesDataJSON);
+  console.log(prices);
 
   const price = document.getElementById('price');
   const deliveryCharge = document.getElementById('deliveryCharge');
   const totalPrice = document.getElementById('totalPrice');
 
   function countPrice() {
-  // Perform any necessary calculations to update the total price here
   let sum = 0;
   const productSubtotals = document.querySelectorAll(".product-price");
   productSubtotals.forEach((subtotal) => {
     sum += parseFloat(subtotal.textContent.replace("$", ""));
   });
 
+  
+  const counts = document.querySelectorAll(".counter");
+  counts.forEach((countElement, index) => {
+    const initialPrice = prices[index]; 
+    const count = parseInt(countElement.textContent);
+    const initialProductTotal = initialPrice * count;
+    sum += initialProductTotal;
+  });
+
   const price = document.getElementById("price");
   const deliveryCharge = document.getElementById("deliveryCharge");
   const totalPrice = document.getElementById("totalPrice");
 
-  price.textContent = `$${sum}`;
-  deliveryCharge.textContent = "$500"; // Your delivery charge
-  totalPrice.textContent = `$${sum + 500}`;
+
+  // price.textContent = `$${sum}`;
+  // deliveryCharge.textContent = "$500"; 
+  // totalPrice.textContent = `$${sum + 500}`;
 }
+
+window.onload = countPrice;
+
 
   
   window.onload = countPrice; 
 
-  //        // Attach a click event listener to the "Remove" buttons
-  // $('.remove-product').on('click', function () {
-  //   const productId = $(this).data('productid');
-  //   const listItem = $(this).closest('li'); // Capture the list item here
+//   $(document).ready(function () {
+//   let productIdToRemove = null;
 
-  //   // Send a request to the server to remove the product
-  //   $.ajax({
-  //     type: 'GET',
-  //     url: `/userCart/delete/${productId}`,
-  //     success: function (response) {
-  //       // Check if the removal was successful before removing the item from the list
-  //       if (response.message === 'Product removed from cart') {
-  //         listItem.remove(); // Remove the list item
-  //         alert(response.message);
-  //       } else {
-  //         alert('Failed to remove the product');
-  //       }
-  //     },
-  //     error: function (error) {
-  //       alert(error.responseJSON.error);
-  //     },
-  //   });
-  // });
+//   $(document).on("click", ".removebtn", function () {
+//     productIdToRemove = $(this).data("productid");
+//     console.log($(this).data("productid"));
+//     console.log(productIdToRemove);
+    
+ 
+//     $("#confirmModal").modal("show");
+//   });
+
+//   $("#confirmModal").on("show.bs.modal", function () {
+//     console.log("Modal is about to be shown.");
+
+//     $("#removeProductForm").attr("action", `/user/userCart/delete/${productIdToRemove}`);
+//   });
+// });
+
   </script>
  
     <script

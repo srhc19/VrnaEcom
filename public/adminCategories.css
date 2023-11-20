@@ -129,3 +129,22 @@ body {
   color: black;
   border: none;
 }
+/* for order page */
+.change-status-btn {
+  font-size: 0.8rem;
+  background-color: aquamarine;
+}
+
+.ordermanagement_link {
+  color: black;
+  text-decoration: none;
+}
+
+.ordermanagement_link:hover,
+.ordermanagement_link:active {
+  text-decoration: underline;
+}
+/* orderMAnagementPage */
+.return-reason {
+  white-space: pre-line;
+}

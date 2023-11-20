@@ -26,7 +26,7 @@
         <div class="column">PRODUCTS</div>
         <div class="column">CATEGORIES</div>
         <div class="column">ORDERS</div>
-        <div class="column">COUPONDS</div>
+        <div class="column">COUPONS</div>
         <div class="column">CUSTOMERS</div>
         <div class="logout-container">
           <form action="/user/logout?_method=DELETE" method="post">
@@ -55,17 +55,23 @@
               required
             />
           </div>
+
           <div class="mb-3">
             <label for="productCategory" class="form-label"
               >Product Category</label
             >
-            <input
-              type="text"
+            <select
               class="form-control"
               id="productCategory"
               name="productCategory"
               required
-            />
+            >
+              <% categories.forEach(category => { %>
+              <option value="<%= category.categoryName %>">
+                <%= category.categoryName %>
+              </option>
+              <% }); %>
+            </select>
           </div>
           <div class="mb-3">
             <label for="productPrice" class="form-label">Product Price</label>

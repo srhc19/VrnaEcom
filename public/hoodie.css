@@ -1,0 +1,171 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+body {
+  font-family: "Lora", serif;
+}
+.login-img {
+  width: 35%;
+  height: auto;
+}
+
+.login-container {
+  display: flex;
+
+  gap: 3rem;
+  /* margin-top: 5rem; */
+  margin-left: 10rem;
+}
+
+.heading-primary {
+  margin-top: 5rem;
+  margin-left: 28rem;
+}
+.primary-heading {
+  font-size: 3rem;
+  margin-left: 4rem;
+}
+/* ******** */
+/* cards */
+/* ********* */
+.cardContainer {
+  margin-top: 7rem;
+  position: relative;
+}
+.row-container {
+  margin-bottom: 3rem;
+}
+.btn-Buynow {
+  padding: 0.5rem 1rem;
+  background-color: #3d352f;
+  color: azure;
+}
+.card-icon {
+  color: #3d352f;
+  font-size: 2rem;
+}
+.link-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.shopall {
+  text-align: center;
+}
+.btn-shopall {
+  background-color: #3d352f;
+  color: azure;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+/* footer */
+.footer-container {
+  margin-top: 4rem;
+  background-color: #3d352f;
+  padding: 4rem 4rem 1.2rem 4rem;
+  color: azure;
+  font-size: 1.2rem;
+}
+
+.footer-link {
+  text-decoration: none;
+  padding: 1rem;
+  color: azure;
+}
+.footerul {
+  list-style: none;
+  text-align: start;
+}
+.copyright {
+  padding: 1rem;
+  text-decoration: overline;
+}
+/* nav */
+.nav-main {
+  display: flex;
+  gap: 1.5rem;
+  font: size 2rem;
+  align-items: center;
+}
+.nav-container {
+  padding-top: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.navmain-heading {
+  font-size: 2rem;
+}
+.nav-sec {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+/* tittle */
+.title-container {
+  height: 100vh;
+}
+
+h1 {
+  font-size: 6rem;
+  border-color: aliceblue;
+  color: #f1eae5;
+}
+h3 {
+  color: #f1eae5;
+}
+section {
+  background-image: url(/images/Headless_Desktop_-_M_INT.webp);
+  background-size: cover;
+}
+span {
+  color: black;
+}
+.nav__links {
+  text-decoration: none;
+  color: black;
+}
+.nav__links:hover,
+.nav__links:active {
+  text-decoration: underline;
+}
+.logout-btn {
+  padding: 0.5rem 1rem;
+  background-color: #3d352f;
+  color: azure;
+}
+.icons {
+  color: black;
+  padding: 1rem;
+}
+.icons:hover {
+  color: black;
+  padding: 1rem;
+  border-radius: 80%;
+  background-color: rgba(240, 248, 255, 0.348);
+}
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: rgba(238, 94, 94, 0.642);
+  color: black;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
