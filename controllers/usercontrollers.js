@@ -551,7 +551,7 @@ async function usercart(req, res) {
       let deliveryCharge = 500;
       const totalPrice = total + deliveryCharge;
 
-      res.render("usercart.ejs", { products, total, totalPrice });
+      res.render("userCart.ejs", { products, total, totalPrice });
       // return res.status(404).json({ error: "User not found" });
     } else {
       res.redirect("/user/");
