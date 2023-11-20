@@ -268,3 +268,103 @@ h1 {
 .form-control {
   font-size: 1.4rem;
 }
+.span_discount {
+  color: red;
+}
+.product_Price {
+  text-decoration: line-through;
+}
+.card {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+}
+.outerContainer {
+  min-height: 450px;
+}
+.add-to-cart-btn:hover,
+.add-to-cart-btn:active {
+  color: red;
+}
+
+@media (max-width: 599px) {
+  .footer-container .row {
+    flex-direction: column;
+  }
+}
+/* Your existing styles */
+
+/* Media query for screens smaller than 600px */
+@media (max-width: 1000px) {
+  .section1-container {
+    position: relative;
+  }
+
+  .nav-collapsible-btn {
+    display: flex;
+    position: absolute;
+    top: 2%;
+    right: 4%;
+  }
+
+  .icons-collapsible {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.519);
+    /* Add a background color to make it readable */
+    border: 1px solid #ccc; /* Add a border for style */
+  }
+
+  .icons-collapsible-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .show-icons {
+    display: flex;
+  }
+
+  .nav-sec {
+    display: none;
+  }
+
+  .icons {
+    font-size: 1.5rem;
+  }
+}
+@media (min-width: 1000px) {
+  .nav-collapsible-btn,
+  .icons-collapsible,
+  .icons-collapsible-btn,
+  .show-icons {
+    display: none;
+  }
+
+  .nav-sec {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+@media (max-width: 600px) {
+  .shoptheLook {
+    margin-top: 20rem;
+  }
+  .card {
+    min-width: 25rem;
+    margin-left: 7rem;
+  }
+}
+
+.card {
+  max-width: 18rem;
+}

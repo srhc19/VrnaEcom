@@ -17,18 +17,23 @@
     />
 
     <link rel="stylesheet" href="/adminproductpage.css" />
-    <title>Admin Products Page</title>
+    <title>coupons Page</title>
   </head>
   <body style="background-color: rgb(236, 236, 243)">
+    <div class="index-container">
+      <% if (messages.error) { %>
+        <p class="error-message"><%= messages.error[0] %></p>
+        <% } %>
+    </div>
     <div class="mainContainer">
-      <div class="rows adminpanel">
-        <div class="column"><a class="dashboardlinks " href="#">DASHBOARD</a></div>
+      <div class="rows adminpanel toggle-content">
+        <div class="column"><a class="dashboardlinks " href="/admin/dashboard">DASHBOARD</a></div>
         <div class="column"><a class="dashboardlinks " href="#">PRODUCTS</a></div>
         <div class="column">
           <a class="dashboardlinks "  href="/admin/adminCategories">CATEGORIES</a>
         </div>
         <div class="column"><a class="dashboardlinks " href="/admin/adminOrderdetails">ORDERS</a></div>
-        <div class="column"><a class="dashboardlinks " href="#">COUPONDS</a></div>
+        <div class="column"><a class="dashboardlinks " href="#">COUPONS</a></div>
         <div class="column"><a class="dashboardlinks " href="/admin/">CUSTOMERS</a></div>
         <div class="logout-container">
           <form action="/admin/adminProducts/logout" method="post">
@@ -38,13 +43,39 @@
           </form>
         </div>
       </div>
+ <!-- Collapsible button for icons on screens smaller than 600px -->
+ <div class="nav-collapsible-btn">
+  <button id="collapsibleBtn" class="icons-collapsible-btn">
+    <ion-icon name="menu-outline" id="toggle_btn"></ion-icon>
+  </button>
 
+  <!-- Collapsible icons -->
+  <div class="icons-collapsible">
+    <div class="rows adminpanel">
+      <div class="column"><a class="dashboardlinks" href="/admin/dashboard">DASHBOARD</a></div>
+      <div class="column"><a class="dashboardlinks" href="/admin/adminproduct">PRODUCTS</a></div>
+      <div class="column">
+        <a class="dashboardlinks" href="/admin/adminCategories">CATEGORIES</a>
+      </div>
+      <div class="column"><a class="dashboardlinks" href="/admin/adminOrderdetails">ORDERS</a></div>
+      <div class="column"><a class="dashboardlinks" href="/admin/adminCoupons">COUPONS</a></div>
+      <div class="column"><a class="dashboardlinks" href="#">CUSTOMERS</a></div>
+      <div class="logout-container">
+        <form action="/user/logout?_method=DELETE" method="post">
+          <button class="logout-btn btn-secondary" type="submit">
+            Log Out
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
       <div class="container" style="background-color: rgb(236, 236, 243)">
         
 
         <table class="table caption-top">
           <div class="addcontainer">
-            <div class="h5">LIST OF PRODUCTS</div>
+            <div class="h5  coupons_title">COUPONS</div>
             <div class="searchbox d-flex">
               <form id="searchForm" method="GET" class="d-flex" role="search">
                 <input
@@ -64,7 +95,7 @@
             
             <div class="dropdown">
               <button
-                class="btn btn-success dropdown-toggle btn-padding button"
+                class="btn btn-success dropdown-toggle btn-padding button" id="add__coupon"
                 type="button "
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -73,7 +104,7 @@
               </button>
               <ul class="dropdown-menu p-3">
                 <li>
-                  <form
+                  <form id="addCouponForm" 
                     class="dropdown-item"
                     method="POST"
                     action="/admin/AddCoupon "
@@ -87,7 +118,7 @@
                       type="text"
                       id="couponname"
                       name="couponname"
-                      required
+                  
                     /><br />
                   </div> 
 
@@ -100,7 +131,7 @@
                         type="number"
                         id="minmum"
                         name="minmum"
-                        required
+                  
                       /><br />
                     </div>
                     
@@ -113,7 +144,7 @@
                         type="number"
                         id="maximum"
                         name="maximum"
-                        required
+                   
                       /><br />
                     </div>
                     <div class="d-flex flex-column">
@@ -125,7 +156,7 @@
                         type="number"
                         id="Discountpercentage"
                         name="Discountpercentage"
-                        required
+                     
                       /><br />
                     </div>
                     <div class="d-flex flex-column">
@@ -135,9 +166,9 @@
                       <input
                         class="formpd"
                         type="date"
-                        id="expirydate"
-                        name="expirydate"
-                        required
+                        id="date"
+                        name="date"
+                       
                       /><br />
                     </div>
                     <button class="formpd btn btn-danger btns button" type="submit">
@@ -156,6 +187,7 @@
               <th scope="col">MINIMUM PRICE</th>
               <th scope="col"> MAXIMUM PRICE</th>
               <th scope="col">DISCOUNT</th>
+              <th scope="col">EXPIRY DATE</th>
 
               <th scope="col">UPDATE</th>
               <th scope="col">DELETE</th>
@@ -175,12 +207,13 @@
               <td><%=coupon.min%></td>
               <td><%= coupon.max %></td>
               <td><%=coupon.Discount%></td>
+              <td><%= coupon.expirydate ? coupon.expirydate.toLocaleDateString() : 'N/A' %></td>
 
              
               <td>
                 <div class="dropdown">
                   <button
-                    class="btn btn-success dropdown-toggle btn-padding button"
+                    class=" formpd btn btn-success dropdown-toggle btn-padding button" id="update-btn"
                     type="button "
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
@@ -258,7 +291,7 @@
                   method="post"
                   action="/admin/deleteCoupon/<%=coupon._id%>   "
                 >
-                  <button type="submit" class="btn btn-danger btns button">
+                  <button type="submit" class="btn btn-danger btns button" id="delete-btn">
                     Delete
                   </button>
                 </form>
@@ -296,6 +329,49 @@
       crossorigin="anonymous"
     ></script>
     <script>
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addCouponForm = document.getElementById("addCouponForm");
+
+  addCouponForm.addEventListener("submit", (event) => {
+    const couponname = document.getElementById("couponname");
+    const minmum = document.getElementById("minmum");
+    const maximum = document.getElementById("maximum");
+    const Discountpercentage = document.getElementById("Discountpercentage");
+    const date = document.getElementById("date");
+
+   
+    const couponNameRegex = /^[a-zA-Z0-9]+$/;
+    if (!couponNameRegex.test(couponname.value)) {
+      event.preventDefault();
+      alert("Coupon name should contain only letters and numbers.");
+      return;
+    }
+
+    
+    const currentDate = new Date();
+    const selectedDate = new Date(date.value);
+    if (selectedDate <= currentDate) {
+      event.preventDefault();
+      alert("Expiry date should be set to a future date.");
+      return;
+    }
+
+    if (
+      !couponname.checkValidity() ||
+      !minmum.checkValidity() ||
+      !maximum.checkValidity() ||
+      !Discountpercentage.checkValidity() ||
+      !date.checkValidity()
+    ) {
+      event.preventDefault();
+      alert("Please fill in all the required fields.");
+    }
+  });
+});
+
+
       const ITEMS_PER_PAGE =3 ;
 
 
@@ -413,20 +489,27 @@
 
   for (let i = 1; i <= totalPages; i++) {
     if (currentPage === i) {
-      paginationHTML += `<li class="active page-item"><a class="page-link" href="/admin/search?query=${query}&page=${i}">${i}</a></li>`;
+      paginationHTML += `<li class="active page-item"><a class="page-link" href="/admin/adminCoupons?query=${query}&page=${i}">${i}</a></li>`;
     } else {
-      paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/search?query=${query}&page=${i}">${i}</a></li>`;
+      paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/adminCoupons?query=${query}&page=${i}">${i}</a></li>`;
     }
   }
 
   if (currentPage < totalPages) {
-    paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/search?query=${query}&page=${currentPage + 1}">Next</a></li>`;
+    paginationHTML += `<li class="page-item"><a class="page-link" href="/admin/adminCoupons?query=${query}&page=${currentPage + 1}">Next</a></li>`;
   }
 
   paginationHTML += `</ul>`;
   return paginationHTML;
 }
+document.addEventListener("DOMContentLoaded", function() {
+    var collapsibleBtn = document.getElementById("collapsibleBtn");
+    var iconsCollapsible = document.querySelector(".icons-collapsible");
 
+    collapsibleBtn.addEventListener("click", function() {
+      iconsCollapsible.classList.toggle("show-icons");
+    });
+  });
     </script>
   </body>
 </html>

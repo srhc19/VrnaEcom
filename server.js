@@ -15,11 +15,11 @@ app.use(nocache());
 
 const MongoDBSession = require("connect-mongodb-session")(session);
 const mongoose = require("mongoose");
-
+require("dotenv").config();
 //helper
-const initializePassport = require("./controllers/passport-config");
+const initializePassport = require("./helper/passport-config");
 
-const dbURI = "mongodb://localhost:27017/vrna";
+const dbURI = process.env.mongodb;
 
 mongoose
   .connect(dbURI, {

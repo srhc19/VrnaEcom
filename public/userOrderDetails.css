@@ -122,8 +122,9 @@ h2 {
 .outerContainer {
   margin-top: 9rem;
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  /* grid-template-columns: 3fr 1fr; */
   margin-bottom: 10rem;
+  position: relative;
 }
 .priceContainer {
   align-items: center;
@@ -204,4 +205,20 @@ input:focus {
 }
 .input-value {
   font-size: 1.6rem;
+}
+.span {
+  margin-right: 10rem;
+  margin-top: 5rem;
+}
+
+#span {
+  position: absolute;
+  right: 20px;
+  color: red;
+  top: 60px;
+  font-size: 2rem;
+}
+.details_link {
+  text-decoration: none;
+  color: black;
 }

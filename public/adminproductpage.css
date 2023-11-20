@@ -7,6 +7,7 @@
 body {
   font-family: "Lora", sans-serif;
   background-color: #f0f0f0;
+  overflow-x: hidden;
 }
 
 .logout-container {
@@ -149,4 +150,255 @@ td {
 }
 .page-link {
   color: #3d352f;
+}
+.index-container {
+  height: 30px;
+  text-align: center;
+  padding-top: 1rem;
+  color: red;
+}
+/* /// */
+@media (max-width: 800px) {
+  .mainContainer {
+    position: relative;
+  }
+
+  .nav-collapsible-btn {
+    display: flex;
+    position: absolute;
+    top: 2%;
+    right: 4%;
+
+    background-color: black;
+  }
+
+  .icons-collapsible {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.301);
+    /* Add a background color to make it readable */
+    border: 1px solid #ccc; /* Add a border for style */
+    z-index: 1;
+  }
+
+  .icons-collapsible-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    color: black;
+  }
+
+  .show-icons {
+    display: flex;
+  }
+
+  .toggle-content {
+    display: none;
+  }
+
+  .icons {
+    font-size: 1.5rem;
+  }
+}
+@media (min-width: 800px) {
+  .nav-collapsible-btn,
+  .icons-collapsible,
+  .icons-collapsible-btn,
+  .show-icons {
+    display: none;
+  }
+
+  .toggle-content {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+#toggle_btn {
+  color: black;
+}
+@media (max-width: 600px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 2rem;
+  }
+  th {
+    font-size: 0.6rem;
+    background-color: rgb(236, 236, 243);
+    font-weight: bolder;
+  }
+  td {
+    font-size: 0.6rem;
+    background-color: rgb(236, 236, 243);
+    font-weight: bolder;
+  }
+  .coupons_title {
+    display: none;
+  }
+
+  .searchInput,
+  .btnSearch {
+    font-size: 0.6rem;
+  }
+  #add__coupon {
+    font-size: 0.6rem;
+    z-index: 0;
+  }
+  .addcontainer {
+    justify-content: space-around;
+  }
+  #update-btn,
+  #add-product {
+    font-size: 0.5rem;
+    padding: 0.2rem;
+    z-index: 0;
+  }
+  #delete-btn {
+    font-size: 0.5rem;
+    padding: 0.2rem;
+    z-index: 0;
+  }
+  .container,
+  table {
+    margin-left: -1.2rem;
+  }
+  .productimg {
+    display: none;
+  }
+  .productname {
+    font-size: 0.6rem;
+  }
+  .title {
+    font-size: 1rem;
+  }
+}
+@media (min-width: 800px) and (max-width: 1000px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 3rem;
+  }
+  th {
+    font-size: 1.3rem;
+    background-color: rgb(236, 236, 243);
+  }
+  td {
+    font-size: 1.3rem;
+    background-color: rgb(236, 236, 243);
+  }
+  .adminpanel {
+    font-size: 1.4rem;
+  }
+  .productimg {
+    display: none;
+  }
+  .productname {
+    font-size: 0.6rem;
+  }
+  .title {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 610px) and (max-width: 799px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 3rem;
+  }
+  th {
+    font-size: 0.7rem;
+    background-color: rgb(236, 236, 243);
+    font-weight: bolder;
+  }
+  td {
+    font-size: 0.7rem;
+    background-color: rgb(236, 236, 243);
+    font-weight: bolder;
+  }
+  .coupons_title {
+    display: none;
+  }
+
+  .searchInput,
+  .btnSearch {
+    font-size: 0.7rem;
+  }
+  #add__coupon {
+    font-size: 0.7rem;
+    z-index: 0;
+  }
+  .addcontainer {
+    justify-content: space-around;
+  }
+  #update-btn {
+    font-size: 0.5rem;
+    padding: 0.2rem;
+    z-index: 0;
+  }
+  #delete-btn {
+    font-size: 0.7rem;
+    padding: 0.2rem;
+    z-index: 0;
+  }
+
+  .adminpanel {
+    font-size: 1rem;
+  }
+}
+@media (min-width: 800px) and (max-width: 1000px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 3rem;
+  }
+  th {
+    font-size: 0.7rem;
+    background-color: rgb(236, 236, 243);
+    font-weight: bolder;
+  }
+  td {
+    font-size: 0.7rem;
+    background-color: rgb(236, 236, 243);
+    font-weight: bolder;
+  }
+  .coupons_title {
+    display: none;
+  }
+
+  .searchInput,
+  .btnSearch {
+    font-size: 0.7rem;
+  }
+  #add__coupon {
+    font-size: 0.7rem;
+    z-index: 0;
+  }
+  .addcontainer {
+    justify-content: space-around;
+  }
+  #update-btn {
+    font-size: 0.5rem;
+    padding: 0.2rem;
+    z-index: 0;
+  }
+  #delete-btn {
+    font-size: 0.7rem;
+    padding: 0.2rem;
+    z-index: 0;
+  }
+
+  .adminpanel {
+    font-size: 1rem;
+  }
 }

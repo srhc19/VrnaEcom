@@ -28,11 +28,43 @@
         <h5>ABOUT</h5>
       </div>
       <div class="nav-sec">
-        <h5><ion-icon name="search-outline"></ion-icon> </h5>
-        <h5><ion-icon name="person-outline"></ion-icon></h5>
-        <h5><ion-icon name="cart-outline"></ion-icon></h5>
+      
+        <h4><a  class="icons" href="/user/Whishlist"><ion-icon name="heart-outline"></ion-icon></a></h4>
+        <!-- <h4><ion-icon name="search-outline"></ion-icon> </h4> -->
+        <h4><a  class="icons" href="/user/userprofile"><ion-icon name="person-outline"></ion-icon></a></h4>
+        <h4><div class="cart-icon-container">
+          <a class="icons" href="/user/usercart">
+            <ion-icon name="cart-outline"></ion-icon>
+           
+          </a>
+        </div></h4>
+
+        <h5><form action="/user/logout?_method=DELETE" method="post">
+          <button class="logout-btn" type="submit">Log Out</button>
+        </form></h5>
         </div>
-    </h5>
+                <!-- Collapsible button for icons on screens smaller than 600px -->
+                <div class="nav-collapsible-btn">
+                  <button id="collapsibleBtn" class="icons-collapsible-btn">
+                    <ion-icon name="menu-outline"></ion-icon>
+                  </button>
+        
+                  <!-- Collapsible icons -->
+                  <div class="icons-collapsible">
+                    <a class="icons" href="/user/Whishlist"><ion-icon name="heart-outline"></ion-icon></a>
+                    <a class="icons" href="/user/userprofile"><ion-icon name="person-outline"></ion-icon></a>
+                    <div class="cart-icon-container">
+                      <a class="icons" href="/user/usercart">
+                        <ion-icon name="cart-outline"></ion-icon>
+                        
+                      </a>
+                    </div>
+                    <form action="/user/logout?_method=DELETE" method="post">
+                      <button class="logout-btn" type="submit">Log Out</button>
+                    </form>
+                  </div>
+                </div>
+
     </div>
     <h2 class="primary-heading">Cart Details</h2>
     <div class="container outerContainer">
@@ -119,12 +151,14 @@
                    <form     method="GET"
                    action="/user/userCart/delete/<%= product._id %>">
                                       <!-- Button trigger modal -->
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Remove 
-</button>
+                                      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal_<%= product._id %>">
+                                        Remove
+                                      </button>
+                                      
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal_<%= product._id %>" tabindex="-1" aria-labelledby="exampleModalLabel_<%= product._id %>" aria-hidden="true">
+
   <div class="modal-dialog modal-dialog-centered ">
     <div class="modal-content">
       <div class="modal-header">
@@ -136,7 +170,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-danger" class="btn btn-danger btns removebtn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-productid ="<%= product._id %>">Remove</button>
+        <button type="submit" class="btn btn-danger" class="btn btn-danger btns removebtn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-product-id ="<%= product._id %>">Remove</button>
       </div>
     </div>
   </div>
@@ -160,7 +194,7 @@
 
 
           <h5 class="price-heading">PRICE DETAILS</h5>
-          <p class="pricedetailsp"><strong>Price : </strong><span id="price"> $<%=total%></span></p>
+          <p class="pricedetailsp"><strong>Price : </strong><span id="price"> $<%=total.toFixed(2)%></span></p>
           <p class="pricedetailsp"><strong>Delivery Charge :</strong> <span id="deliveryCharge">$500</span>   </p>
           <p  class="pricedetailsp"><strong>TotalPrice :</strong><span id="totalPrice">$<%=totalPrice%></span>  </p>
                 <a href="/user/checkout" class="btn btn-Buynow">PROCEED TO CHECKOUT</a>
@@ -256,8 +290,8 @@ incrementButtons.forEach((button, index) => {
  
     const countElement = document.getElementById(`count${productId}`);
     let count = Number(countElement.textContent);
+    let oldcount = count;
 
-   
     count++;
     
   
@@ -281,6 +315,10 @@ incrementButtons.forEach((button, index) => {
         response.json().then(data=>{
           document.querySelector("#price").textContent = data.total;
           document.querySelector("#totalPrice").textContent = data.totalPrice;
+          if(data.valuechanged){
+            countElement.textContent =oldcount;
+            alert("Out Of Stock")
+          }
         })
       
       } else {
@@ -400,7 +438,14 @@ window.onload = countPrice;
 //     $("#removeProductForm").attr("action", `/user/userCart/delete/${productIdToRemove}`);
 //   });
 // });
+document.addEventListener("DOMContentLoaded", function() {
+    var collapsibleBtn = document.getElementById("collapsibleBtn");
+    var iconsCollapsible = document.querySelector(".icons-collapsible");
 
+    collapsibleBtn.addEventListener("click", function() {
+      iconsCollapsible.classList.toggle("show-icons");
+    });
+  });
   </script>
  
     <script

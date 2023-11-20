@@ -166,13 +166,23 @@
                   Pay Now 
                 </label>
               </div>
+         
             </div>
           
           <div class="container priceContainer">
               <h5 class="price-heading">PRICE DETAILS</h5>
-                <p class="pricedetailsp"><strong>Price : </strong><span id="price"> $<%=price%></span></p>
+                <p class="pricedetailsp"><strong>Price : </strong><span id="price"> $<%=price.toFixed(2)%></span></p>
                 <p class="pricedetailsp"><strong>Delivery Charge :</strong> <span id="deliveryCharge">$500</span>   </p>
+                <p class="pricedetailsp"><strong>Discount :</strong> <span id="discount">$00</span>   </p>
                 <p  class="pricedetailsp"><strong>TotalPrice :</strong><span id="totalPrice">$<%=totalPrice%></span>  </p>
+                <% if(walletamount >0){ %>
+                  <div class="wallet-check mx-5">
+                    <input class="wallet-input" type="radio" name="wallet" id="walletid"  onchange="walletchange()">
+                    <label class="wallet-label" for="walletid">
+                      Apply wallet : $ <span id="wallet_amount"><%= walletamount %> </span>
+                    </label>
+                  </div>
+               <% } %>
                 <button class="btn btn-Buynow" id="confirmOrder">CONFIRM ORDER</button>
                       
                 </p>
@@ -237,6 +247,35 @@
 
 
       <script>
+let amount = null;
+let walletApplied = false;
+const wallet_amount = Number(document.getElementById("wallet_amount").textContent);
+     function walletchange(){
+      const wallet =  document.getElementById("walletid");
+     if(wallet.checked){
+    //  const amount =  parseInt(document.getElementById("totalPrice").textContent.replace(/\D/g, ''), 10);
+
+     let  total__price = parseFloat(document.getElementById("price").textContent.replace(/[^0-9.]/g, ''));
+
+
+
+ 
+   
+     if(wallet_amount > total__price){
+      //  amount = (wallet_amount - total__price).toFixed(2);
+      wallet.checked = false;
+      alert("Cant Apply Wallet if Product Price is less than wallet")
+     
+     }else if(wallet_amount < total__price){
+    
+      amount = (total__price - wallet_amount).toFixed(2) ;
+      document.getElementById("totalPrice").textContent = Number(amount) +500;
+      amount=Number(amount) +500;
+      walletApplied = true;
+      
+     }
+     }
+     }
 
         let selectedAddressIndex = 0; 
 
@@ -295,13 +334,15 @@ if(enteredCouponCode){
       response.json().then(data=>{
        
         const dicountPercentage = data.discount;
-
+      
 const originalTotalPrice = parseFloat(document.getElementById("totalPrice").innerHTML.slice(1));
 const discountedTotalPrice =(1-dicountPercentage /100)* originalTotalPrice;
-
+const discount  =( originalTotalPrice - discountedTotalPrice).toFixed(2);
 document.getElementById("totalPrice").innerText =`$${discountedTotalPrice.toFixed(2)}`
 document.getElementById("enteredCouponCode").innerText = enteredCouponCode;
 document.getElementById("changeCouponBtn").style.display = "inline"; 
+document.getElementById("discount").innerText =`$${discount}`
+
 fetch("/user/updateTotalPrice", {
     method: "POST",
     headers: {
@@ -311,6 +352,8 @@ fetch("/user/updateTotalPrice", {
   }).then((response) => {
     if (response.ok) {
       // document.getElementById("totalPrice").innerHTML = `$${discountedTotalPrice.toFixed(2)}`;
+      document.getElementById("error_message").innerText="Coupon Applied"
+      
       console.log('Total price updated on the server');
     } else {
       console.error('Failed to update total price on the server');
@@ -347,6 +390,7 @@ body : JSON.stringify({code})
      response.json().then(data=>{
       document.getElementById("totalPrice").innerText =`$   ${data.originalPrice}`
       document.getElementById("error_message").innerText="";
+      document.getElementById("discount").innerText =`$00`
      })
     }else{
       console.log("error coupon code ")
@@ -359,18 +403,25 @@ body : JSON.stringify({code})
 
         document.getElementById("confirmOrder").addEventListener("click", function () {
         const cashOnDeliveryChecked = document.getElementById("cashOnDelivery").checked;
+        const firstname = document.getElementById("form11Example1").value
+        const lastname = document.getElementById("form11Example2").value
+        const address = document.getElementById("form11Example4").value
+        const pinCode = document.getElementById("form11Example5").value
+        const contactNum = document.getElementById("form11Example6").value
+
 
         if (cashOnDeliveryChecked) {
 
           window.location.href = "/user/orderConfirmed";
         } else {
+         
 
           fetch("/user/storeTotalPrice",{
             method:"POST",
             headers:{
               "Content-Type" :"application/json"
           },
-          body : JSON.stringify({Price:totalPrice})
+          body : JSON.stringify({ Price: Number(amount) > 0 ? Number(amount) : totalPrice,firstname,lastname,address,pinCode,contactNum, walletApplied,wallet_amount})
         }).then((response)=>{
           if(response.ok){
             
@@ -383,9 +434,10 @@ body : JSON.stringify({code})
 
         }
       });
-
-
-
+      window.onload = function() {
+  const w = document.getElementById("walletid");
+  w.checked = false;
+};
 
 
       </script>

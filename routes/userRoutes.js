@@ -1,15 +1,23 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+
+//controllers
 const userController = require("../controllers/usercontrollers");
-const cartModel = require("../models/cart");
-const Product = require("../models/addproducts");
-const UserModel = require("../models/user");
-const orderModel = require("../models/order");
 const paymentController = require("../controllers/paymentController");
-const ITEMS_PER_PAGE = 8;
-const couponsModel = require("../models/coupons");
-// const { default: orders } = require("razorpay/dist/types/orders");
+const wishlistController = require("../controllers/wishlistController");
+const categoryController = require("../controllers/categoryController");
+const orderController = require("../controllers/orderController");
+const { addProducts } = require("../controllers/adminController");
+const offerController = require("../controllers/offerController");
+
+
+
+
+
+
+
+
 
 router.get("/userprofile", userController.userProfile);
 
@@ -124,335 +132,124 @@ router.get(
   paymentController.paynow
 );
 
-router.post("/user/paymentSuccess", async (req, res) => {
-  const razorpayPaymentResponse = req.body;
+router.post("/user/paymentSuccess", paymentController.paymentSuccess);
 
-  res.render("payment-success-page", {
-    paymentResponse: razorpayPaymentResponse,
-  });
-});
+router.post("/getrazorpayID", paymentController.getrazorpayID);
 
-router.post("/getrazorpayID", async (req, res) => {
-  const Payment_id = req.body.paymentId;
-
-  const orderId = req.session.orderid;
-  const order = await orderModel.findOne({ orderId });
-
-  order.razorPayment_id = Payment_id;
-  order.paymentMode = "Online Payment";
-  order.razorpaymentStatus = "success";
-
-  order.save();
-  return res.status(200).json({ success: true });
-});
-
-router.post("/razorrejection", async (req, res) => {
-  const error = req.body.error;
-  const Payment_id = req.body.paymentID;
-
-  const orderId = req.session.orderid;
-  const order = await orderModel.findOne({ orderId });
-  console.log(order);
-
-  order.razorPayment_id = Payment_id;
-  order.paymentMode = "Online Payment";
-  order.razorpaymentStatus = "Failed";
-  order.save();
-
-  req.session.razorpayStatus = true;
-  return res.status(200).json({ success: true });
-});
-
-router.get("/failedPayment", userController.checkorderCanceled, (req, res) => {
-  res.render("failedPayment");
-});
-
-router.get("/mainproductSearch", async (req, res) => {
-  try {
-    const query = req.query.query;
-    if (!query) {
-      return res.status(400).json({ error: "Invalid search query" });
-    }
-
-    const searchResult = await Product.find({
-      $or: [
-        {
-          productName: {
-            $regex: new RegExp(query, "i"),
-          },
-        },
-        {
-          productCategory: {
-            $regex: new RegExp(query, "i"),
-          },
-        },
-      ],
-    }).limit(5);
-
-    res.json({
-      results: searchResult,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: "Internal server",
-    });
-  }
-});
-
-router.get("/list", async (req, res) => {
-  try {
-    const products = await Product.find();
-    if (!products) {
-    }
-    res.render("whistlist", { products });
-  } catch (error) {}
-});
-
-router.post("/storeTotalPrice", async (req, res) => {
-  try {
-    const { Price } = req.body;
-    const orderId = req.session.orderid;
-
-    const order = await orderModel.findOneAndUpdate(
-      { orderId },
-      {
-        totalPrice: req.session.coupondiscountedPrice || Price,
-      }
-    );
-
-    req.session.coupondiscountedPrice = null;
-    res.status(200).json({ message: "Total price updated successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Error" });
-  }
-});
-
-router.post("/updateTotalPrice", async (req, res) => {
-  try {
-    const { Price, originalTotalPrice } = req.body;
-    const orderId = req.session.orderid;
-    req.session.originalTotalPrice = originalTotalPrice;
-    const order = await orderModel.findOneAndUpdate(
-      { orderId },
-      {
-        totalPrice: Price,
-      }
-    );
-    req.session.coupondiscountedPrice = Price;
-
-    res.status(200).json({
-      message: "Total price updated successfully",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Error" });
-  }
-});
-
-router.post("/findCoupon", async (req, res) => {
-  try {
-    const enteredCouponCode = req.body.enteredCouponCode;
-
-    const coupon = await couponsModel.findOne({
-      couponCode: enteredCouponCode,
-    });
-
-    if (!coupon) {
-      return res.status(400).json({
-        message: "Invalid Coupon",
-      });
-    }
-
-    if (req.session.couponCode) {
-      if (req.session.couponCode === enteredCouponCode) {
-        return res.status(400).json({
-          message: "Coupon Already Applied",
-        });
-      }
-    }
-    if (req.session.couponapplied) {
-      return res.status(400).json({
-        message: "you can only use one coupon per order",
-      });
-    }
-
-    const discount = coupon.Discount;
-    req.session.couponCode = enteredCouponCode;
-    req.session.couponapplied = true;
-    res.status(200).json({
-      discount,
-    });
-  } catch (error) {
-    res.status(500).json({ Error: "Server Error" });
-  }
-});
-
-router.post("/changeCouponCode", async (req, res) => {
-  try {
-    const { code } = req.body;
-    const originalPrice = req.session.originalTotalPrice;
-
-    req.session.couponapplied = false;
-    req.session.couponCode = null;
-    req.session.originalTotalPrice = null;
-    res.status(200).json({ originalPrice });
-  } catch (error) {
-    res.status(500).json({ error: "server Error" });
-  }
-});
-
-router.get("/userOrderDetails", async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const skip = (page - 1) * ITEMS_PER_PAGE;
-    const userId = req.session.user._id.toString();
-
-    const orders = await orderModel
-      .find({ userId })
-      .skip(skip)
-      .limit(ITEMS_PER_PAGE);
-    const updatedOrders = orders.map((order) => {
-      const dateString = order.Date.toString();
-      const dateObj = new Date(dateString);
-      const date = dateObj.toISOString().slice(0, 10);
-      const options = { weekday: "long" };
-      const dayOfWeek = new Intl.DateTimeFormat("en-US", options).format(
-        dateObj
-      );
-      return { ...order._doc, Date: `${date} ${dayOfWeek}` };
-    });
-
-    const totalProductCount = await orderModel
-      .find({ userId })
-      .countDocuments();
-    const totalPages = Math.ceil(totalProductCount / ITEMS_PER_PAGE);
-    const number = (page - 1) * ITEMS_PER_PAGE + 1;
-    res.render("userOrderDetails", {
-      orders: updatedOrders,
-      currentPage: page,
-      totalPages,
-      number,
-    });
-  } catch (error) {
-    res.status(500).status({ error: "server Error" });
-  }
-});
-
-router.get("/userorderCancel/:orderId", async (req, res) => {
-  try {
-    const order_id = req.params.orderId;
-    const order = await orderModel.findOne({
-      _id: order_id,
-    });
-
-    if (
-      order.OrderedState !== "delivered" &&
-      order.OrderedState !== "Issued For Return"
-    ) {
-      order.OrderedState = "canceled";
-      await order.save();
-      return res.send({ message: "canceled", order_id });
-    }
-  } catch (error) {
-    res.status(500).status({ error: "server Error" });
-  }
-});
-
-router.get("/userorderReturn/:userId", async (req, res) => {
-  try {
-    const user_id = req.params.userId.toString();
-
-    const orders = await orderModel.find({
-      userId: user_id,
-      OrderedState: "delivered",
-    });
-
-    let newordersArray = [];
-
-    orders.forEach((order) => {
-      const providedDate = new Date(order.Date.toString());
-      const currentDate = Date.now();
-      const timeDifference = currentDate - providedDate;
-
-      const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-
-      if (daysDifference < 10) {
-        newordersArray.push(order._id);
-      }
-    });
-    res.send({ message: "success", newordersArray });
-  } catch (error) {
-    res.status(500).status({ error: "server Error" });
-  }
-});
-
-router.post("/userReturnProduct/:orderId", async (req, res) => {
-  try {
-    const { inputValue } = req.body;
-    const order_id = req.params.orderId;
-    const order = await orderModel.findOne({
-      _id: order_id,
-    });
-
-    if (order.OrderedState === "delivered") {
-      order.OrderedState = "Applied For Return";
-      order.returnReason = inputValue;
-      await order.save();
-      return res.status(200).json({ message: "Issued For Return", order_id });
-    } else {
-      return res.status(500).json({ message: "Error in returning product" });
-    }
-  } catch (error) {
-    res.status(500).status({ error: "server Error" });
-  }
-});
+router.post("/razorrejection", paymentController.razorrejection);
 
 router.get(
-  "/hoodies",
-  userController.checkAuthenticated,
+  "/failedPayment",
+  userController.checkorderCanceled,
+  paymentController.failedPayment
+);
+
+router.get("/mainproductSearch", categoryController.mainproductSearch);
+
+router.post("/storeTotalPrice", orderController.storeTotalPrice);
+
+router.post("/updateTotalPrice", orderController.functionupdateTotalPrice);
+
+router.post("/findCoupon", offerController.findCoupon);
+
+router.post("/changeCouponCode", offerController.changeCouponCode);
+
+router.get(
+  "/userOrderDetails",
   userController.checkBlocked,
-  async (req, res) => {
-    try {
-      const products = await Product.find({ productCategory: "Hoodie" });
-      if (!products) {
-        res.status(500).status({ error: "products  not found" });
-      }
-      let cartProductCount = 0;
-      const userId = req.session.user._id.toString();
-      const cart = await cartModel.findOne({ userId: userId });
-      if (cart) {
-        cartProductCount = cart.productsInfo.length;
-      }
-      res.render("hoodies", { products, cartProductCount });
-    } catch (error) {
-      res.status(500).status({ error: "server Error" });
-    }
-  }
+  orderController.userOrderDetails
 );
 
 router.get(
-  "/tshirts",
+  "/userorderCancel/:orderId",
+  userController.checkBlocked,
+  orderController.userorderCancel
+);
+
+router.get(
+  "/userorderReturn/:userId",
+  userController.checkBlocked,
+  orderController.userorderReturn
+);
+
+router.post(
+  "/userReturnProduct/:orderId",
+  userController.checkBlocked,
+  orderController.userReturnProduct
+);
+
+router.get(
+  "/Hoodie",
   userController.checkAuthenticated,
   userController.checkBlocked,
-  async (req, res) => {
-    try {
-      const products = await Product.find({ productCategory: "T-Shirt" });
-      if (!products) {
-        res.status(500).status({ error: "products  not found" });
-      }
-      let cartProductCount = 0;
-      const userId = req.session.user._id.toString();
-      const cart = await cartModel.findOne({ userId: userId });
-      if (cart) {
-        cartProductCount = cart.productsInfo.length;
-      }
-
-      res.render("tshirts", { products, cartProductCount });
-    } catch (error) {
-      res.status(500).status({ error: "server Error" });
-    }
-  }
+  categoryController.Hoodie
 );
+
+router.get(
+  "/Hoodie-pagination",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  categoryController.Hoodie_pagination
+);
+
+router.get(
+  "/T-Shirt",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  categoryController.T_Shirt
+);
+
+router.get(
+  "/t-Shirt-pagination",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  categoryController.tShirt_pagination
+);
+
+router.get(
+  "/whishlist",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  wishlistController.wishlist
+);
+
+router.post("/addproduct-whistlist", wishlistController.addproduct_whistlist);
+
+router.get("/whishliststyle", wishlistController.whishliststyle);
+
+router.post(
+  "/removeproduct-whistlist",
+  wishlistController.removeproduct_whistlist
+);
+
+router.get("/invoice/:id", orderController.invoice);
+
+router.get(
+  "/orderdetailsfinal",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  orderController.orderdetailsfinal
+);
+
+router.get("/usereditdetails", userController.usereditdetails);
+
+router.post("/postedituserdetails", userController.postedituserdetails);
+router.get(
+  "/main-page_pagination",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  categoryController.main_page_pagination
+);
+
+router.get(
+  "/orderdetails/:orderId",
+  userController.checkAuthenticated,
+  userController.checkBlocked,
+  orderController.orderdetails
+);
+
+router.get("/Signup", offerController.Signup);
+
+router.get("/walletHistory", offerController.walletHistory);
 
 module.exports = router;

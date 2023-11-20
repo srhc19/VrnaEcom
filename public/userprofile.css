@@ -16,7 +16,7 @@ body {
   background-color: #3d352f;
   padding: 4rem 4rem 1.2rem 4rem;
   color: azure;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .footer-link {
@@ -102,4 +102,87 @@ button {
   margin: 5px;
   cursor: pointer;
   font-size: 1.4rem;
+}
+.referral_Code {
+  font-size: 1.4rem;
+}
+input {
+  font-size: 1.4rem;
+  border: none;
+}
+@media (max-width: 599px) {
+  .footer-container .row {
+    flex-direction: column;
+  }
+}
+@media (max-width: 1000px) {
+  .section1-container {
+    position: relative;
+  }
+
+  .nav-collapsible-btn {
+    display: flex;
+    position: absolute;
+    top: 2%;
+    right: 4%;
+    color: black;
+  }
+
+  .icons-collapsible {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.519);
+    /* Add a background color to make it readable */
+    border: 1px solid #ccc; /* Add a border for style */
+  }
+
+  .icons-collapsible-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .show-icons {
+    display: flex;
+  }
+
+  .nav-sec {
+    display: none;
+  }
+}
+@media (min-width: 1000px) {
+  .nav-collapsible-btn,
+  .icons-collapsible,
+  .icons-collapsible-btn,
+  .show-icons {
+    display: none;
+  }
+
+  .nav-sec {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+.icons {
+  color: black;
+  padding: 1rem;
+}
+.icons:hover {
+  color: black;
+  padding: 1rem;
+  border-radius: 80%;
+  background-color: rgba(240, 248, 255, 0.348);
+}
+#collapsebtn {
+  color: black;
 }

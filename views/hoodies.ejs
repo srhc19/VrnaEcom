@@ -24,7 +24,7 @@
 
     <div class="container nav-container">
       <div class="nav-main">
-        <h2 class="navmain-heading">VRNA</h2>
+        <a href="/user/" class="vrba-heading"> <h2 class="navmain-heading">VRNA</h2></a>
         <a href="#" class="nav__links"><h5>SHOP</h5></a>
         <a href="#" class="nav__links"><h5>CONTACT</h5></a>
         <a href="#" class="nav__links"><h5>ABOUT</h5></a>
@@ -44,7 +44,27 @@
           <button class="logout-btn" type="submit">Log Out</button>
         </form></h5>
         </div>
-    </h5>
+        <!-- Collapsible button for icons on screens smaller than 600px -->
+        <div class="nav-collapsible-btn">
+          <button id="collapsibleBtn" class="icons-collapsible-btn">
+            <ion-icon name="menu-outline"></ion-icon>
+          </button>
+
+          <!-- Collapsible icons -->
+          <div class="icons-collapsible">
+            <a class="icons" href="/user/Whishlist"><ion-icon name="heart-outline"></ion-icon></a>
+            <a class="icons" href="/user/userprofile"><ion-icon name="person-outline"></ion-icon></a>
+            <div class="cart-icon-container">
+              <a class="icons" href="/user/usercart">
+                <ion-icon name="cart-outline"></ion-icon>
+                <span class="cart-count" id="cartCount"><%=cartProductCount?cartProductCount:"0"%></span>
+              </a>
+            </div>
+            <form action="/user/logout?_method=DELETE" method="post">
+              <button class="logout-btn" type="submit">Log Out</button>
+            </form>
+          </div>
+        </div>
     </div>
 <div class="title-container d-flex align-items-center justify-content-center flex-column">
   <h3>HOODIES</h3>
@@ -63,11 +83,21 @@
                 <div class="card-body">
                   <h5 class="card-title"><%= products[i].productName %></h5>
                   <p class="card-text">discription</p>
-                  <p class="card-text">$<%= products[i].productPrice %></p>
+                  <div class="d-flex justify-content-around"><% if(products[i].categoryDiscount >0){%>
+               
+                    <p class="card-text product_Price">$<%= products[i].productPrice %>  </p>
+                    <span class="span_discount">(<%=products[i].categoryDiscount%>% off)</span>
+                    <p class="card-text"><strong>$<%= ((1 - (products[i].categoryDiscount / 100)) * products[i].productPrice) %></strong>  </p>
+                 <% } else{%>
+                  <p class="card-text">$<%= products[i].productPrice %>  </p>
+               <%  } %>
+                  
+                   </div>
                   <div class="link-container">
                     <a href="/admin/product/<%=products[i]._id%>" class="btn btn-Buynow">Buy Now</a>
                     <a class="card-icon" href="#"><ion-icon name="heart-outline"></ion-icon></a>
-                    <a class="card-icon" href="/user/addToCartBtn/<%=products[i]._id%>"><ion-icon name="cart-outline"></ion-icon></a>
+                    <a class="card-icon add-to-cart-btn" href="
+                #" data-card-id="<%=products[i]._id%>" ><ion-icon name="cart-outline"></ion-icon></a>
                   </div>
                 </div>
               </div>
@@ -75,6 +105,23 @@
           <% } %>
         </div>
       </div>
+      <div id="pagination">
+        <ul class="pagination">
+          <% if (currentPage > 1) { %>
+            <li class="page-item"><a  class="page-link" href="#" data-page-number="<%= currentPage - 1 %> ">Previous</a></li>
+          <% } %>
+      
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li <% if (currentPage === i) { %>class="active page-item"<% } %>>
+              <a class="page-link"  href="#" data-page-number="<%= i %>"><%= i %></a>
+            </li>
+          <% } %>
+      
+          <% if (currentPage < totalPages) { %>
+            <li class="page-item"><a  class="page-link" href="#" data-page-number="<%= currentPage + 1 %> ">Next</a></li>
+          <% } %>
+        </ul>
+      </div> 
     
       </div>  
    
@@ -149,6 +196,113 @@
   
 <script>
 
+document.addEventListener('DOMContentLoaded', async function () {
+  const paginationContainer = document.querySelector('.pagination');
+
+  paginationContainer.addEventListener('click', async function (e) {
+    // Check if the clicked element is a pagination link
+    if (e.target.tagName.toLowerCase() === 'a') {
+      e.preventDefault(); // Prevent the default behavior of the link
+
+      const pageNumber = e.target.dataset.pageNumber;
+
+      try {
+        const response = await fetch(`/user/Hoodie-pagination?page=${pageNumber}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Update only the product container
+        document.querySelector('.cardContainer').innerHTML = `
+          <div class="row ">
+            ${data.products.map(product => `
+              ${data.products.indexOf(product) % 5 === 0 ? '</div><div class="row row-container">' : ''}
+              <div class="col">
+                <div class="card" style="width: 18rem;">
+                  <img src="${product.productImages[0]}" class="card-img-top" alt="${product.productName}">
+                  <div class="card-body">
+                    <h5 class="card-title">${product.productName}</h5>
+                    <p class="card-text">discription</p>
+                    <div class="d-flex justify-content-around">
+                      ${product.categoryDiscount > 0 ?
+                        `<p class="card-text product_Price">$${product.productPrice}</p>
+                         <span class="span_discount">(${product.categoryDiscount}% off)</span>
+                         <p class="card-text"><strong>$${((1 - (product.categoryDiscount / 100)) * product.productPrice).toFixed(2)}</strong></p>` :
+                        `<p class="card-text">$${product.productPrice}</p>`}
+                    </div>
+                    <div class="link-container">
+                      <a href="/admin/product/${product._id}" class="btn btn-Buynow">Buy Now</a>
+                      <a class="card-icon" href="#"><ion-icon name="heart-outline"></ion-icon></a>
+                      <a class="card-icon" href="/user/addToCartBtn/${product._id}"><ion-icon name="cart-outline"></ion-icon></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        // Update the pagination
+        paginationContainer.innerHTML = `
+          <ul class="pagination">
+            ${data.currentPage > 1 ? `<li class="page-item"><a class="page-link" data-page-number="${data.currentPage - 1}">Previous</a></li>` : ''}
+            ${Array.from({ length: data.totalPages }, (_, i) => `
+              <li ${data.currentPage === i + 1 ? 'class="active page-item"' : ''}>
+                <a class="page-link" data-page-number="${i + 1}">${i + 1}</a>
+              </li>
+            `).join('')}
+            ${data.currentPage < data.totalPages ? `<li class="page-item"><a class="page-link" data-page-number="${data.currentPage + 1}">Next</a></li>` : ''}
+          </ul>
+        `;
+
+        console.log('Data received:', data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  });
+});
+
+document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+    const orderid = btn.getAttribute("data-card-id");
+    
+    fetch(`/user/addToCartBtn/${orderid}`, {
+      method: "GET"
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          if (data.productadded) {
+        
+            let count = Number(document.querySelector("#cartCount").textContent);
+            document.querySelector("#cartCount").textContent = count + 1;
+            console.log("Product added to Cart");
+            alert("Product added to Cart")
+          }
+        });
+      } else {
+        console.log("Failed to add product to cart");
+      }
+    });
+  });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    var collapsibleBtn = document.getElementById("collapsibleBtn");
+    var iconsCollapsible = document.querySelector(".icons-collapsible");
+
+    collapsibleBtn.addEventListener("click", function() {
+      iconsCollapsible.classList.toggle("show-icons");
+    });
+  });
   </script>
  
     <script

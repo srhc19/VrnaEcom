@@ -19,6 +19,7 @@ const cartSchema = new Schema({
         default: false,
       },
       count: Number,
+      productPrice: Number,
     },
   ],
 });

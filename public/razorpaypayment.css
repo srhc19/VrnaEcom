@@ -103,3 +103,8 @@ h2 {
 .priceContainer {
   font-size: 1.6rem;
 }
+@media (max-width: 599px) {
+  .footer-container .row {
+    flex-direction: column;
+  }
+}

@@ -64,6 +64,16 @@ const userSchema = new Schema({
       },
     },
   ],
+  wallet: [
+   {
+    amount:{
+      type:Number,
+    },
+    walletdate:{
+   type: Date,
+    }
+   }
+  ],
 });
 
 module.exports = mongoose.model("User", userSchema);

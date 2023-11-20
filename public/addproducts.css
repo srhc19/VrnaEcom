@@ -117,3 +117,14 @@ body {
   max-height: 100px;
   max-width: 100px;
 }
+/* dashboardlinks  */
+.dashboardlinks {
+  text-decoration: none;
+  color: black;
+}
+
+.dashboardlinks:hover,
+.dashboardlinks:active {
+  text-decoration: underline;
+  color: black;
+}

@@ -156,6 +156,7 @@ async function postAddProducts(req, res) {
       productPrice,
       productStock,
       productdescription,
+      productOffer,
     } = req.body;
 
     const productImages = req.files.map((file) => `/${file.filename}`);
@@ -168,14 +169,13 @@ async function postAddProducts(req, res) {
       productStock,
       productImages,
       storage,
+      productOffer,
       discription: productdescription,
     });
 
-    // Save the product to the database
     await newProduct.save();
     req.flash("success", "Product Added Succesfully");
     res.redirect("/admin/add-product");
-    // res.status(201).json({ message: "Product added successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -197,14 +197,12 @@ async function postAddProducts(req, res) {
 async function adminProduct(req, res) {
   try {
     if (req.session.user.isAdmin) {
-      // Parse the page query parameter from the request
       const page = parseInt(req.query.page) || 1;
 
       const skip = (page - 1) * ITEMS_PER_PAGE;
 
-      // Query the database to get a subset of products based on pagination
       const products = await addProductsModel
-        .find({ isActive: true })
+        .find()
         .skip(skip)
         .limit(ITEMS_PER_PAGE);
 
@@ -247,7 +245,7 @@ async function adminCategories(req, res) {
 
 async function postAdminCategories(req, res) {
   try {
-    const { categoryName, isActive } = req.body;
+    const { categoryName, isActive, discountpercentage } = req.body;
     const category = await categoryModel.findOne({
       categoryName: categoryName,
     });
@@ -258,6 +256,7 @@ async function postAdminCategories(req, res) {
       const newCategory = new categoryModel({
         categoryName,
         isActive,
+        discountpercentage,
       });
       await newCategory.save();
       res.redirect("/admin/adminCategories");
@@ -285,9 +284,8 @@ async function adminDeleteCategories(req, res) {
 
 async function adminUpdateCategories(req, res) {
   const categoryId = req.params.categoryId;
-  const { categoryName, isActive } = req.body;
+  const { categoryName, isActive, discountpercentage } = req.body;
   try {
-    // Find the user by ID
     const category = await categoryModel.findById(categoryId);
 
     if (!category) {
@@ -295,20 +293,18 @@ async function adminUpdateCategories(req, res) {
       return res.redirect("/admin/adminCategories");
     }
 
-    // Update the user's information if fields are provided
     if (categoryName) {
       category.categoryName = categoryName;
     }
     if (isActive) {
       category.isActive = isActive;
     }
+    if (discountpercentage) {
+      category.discountpercentage = discountpercentage;
+    }
 
-    // console.log("Received request with updateName:", updateName);
-
-    // Save the updated user to the database
     await category.save();
 
-    // Redirect back to the admin page after updating the user
     res.redirect("/admin/adminCategories");
   } catch (error) {
     console.error("Error updating Category:", error);
@@ -318,14 +314,15 @@ async function adminUpdateCategories(req, res) {
 
 async function adminDeleteProducts(req, res) {
   const productId = req.params.productId;
+  const { status } = req.body;
 
   try {
     const product = await Product.findOneAndUpdate(
       { _id: productId },
-      { isActive: false }
+      { isActive: !status }
     );
 
-    res.redirect("/admin/adminproduct");
+    res.status(200).json({ message: "success", productId, status: !status });
   } catch (error) {
     console.error("Error deleting product:", error);
     res.redirect("/admin/adminproduct");
@@ -361,8 +358,6 @@ async function search(req, res) {
       }).countDocuments();
 
       const totalPages = Math.ceil(totalProductsCount / ITEMS_PER_PAGE);
-      console.log(totalPages);
-      // Return the search results as JSON
 
       res.json({
         results: searchResults,
@@ -554,6 +549,9 @@ async function postUpdateProduct(req, res) {
     if (req.body.productdescription) {
       updateData.description = req.body.productdescription;
     }
+    if (req.body.productOffer) {
+      updateData.productOffer = req.body.productOffer;
+    }
     if (req.files && req.files.length > 0) {
       updateData.$push = {
         productImages: {
@@ -601,6 +599,28 @@ async function updateremoveimg(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
+async function dashboard(req, res) {
+  try {
+    const orders = await OrderModel.find();
+    const products = await Product.find({}, "productName productStock");
+
+    let totalAmount = 0;
+    orders.forEach((order) => {
+      if (
+        order.OrderedState !== "cancelled" ||
+        order.OrderedState !== "Accepted"
+      ) {
+        totalAmount = totalAmount + order.totalPrice;
+      }
+    });
+
+    res.render("admindashboard.ejs", { totalAmount, products });
+  } catch (error) {
+    res.status(500).json({ message: " server error" });
+  }
+}
+
 module.exports = {
   adminDeleteUser,
   adminUpdateUser,
@@ -624,4 +644,5 @@ module.exports = {
   updateremoveimg,
   searchCategory,
   searchorder,
+  dashboard,
 };

@@ -22,16 +22,28 @@
   <body style="background-color: rgb(236, 236, 243)">
     <div class="mainContainer">
       <div class="rows adminpanel">
-        <div class="column">DASHBOARD</div>
-        <div class="column">PRODUCTS</div>
-        <div class="column">CATEGORIES</div>
-        <div class="column">ORDERS</div>
-        <div class="column">COUPONS</div>
-        <div class="column">CUSTOMERS</div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/dashboard">DASHBOARD</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="#">PRODUCTS</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/adminCategories">CATEGORIES</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/adminOrderdetails">ORDERS</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/adminCoupons">COUPONS</a>
+        </div>
+        <div class="column">
+          <a class="dashboardlinks" href="/admin/">CUSTOMERS</a>
+        </div>
         <div class="logout-container">
-          <form action="/user/logout?_method=DELETE" method="post">
+          <form action="/admin/adminProducts/logout" method="post">
             <button class="logout-btn btn-secondary" type="submit">
-              LOG OUT
+              Log Out
             </button>
           </form>
         </div>
@@ -96,6 +108,17 @@
               id="productStock"
               name="productStock"
               value="<%=product.productStock%>"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="productStock" class="form-label">Offer</label>
+            <input
+              type="number"
+              class="form-control"
+              id="productOffer"
+              name="productOffer"
+              value="<%=product.productOffer??0%>"
               required
             />
           </div>

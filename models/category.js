@@ -10,6 +10,7 @@ const categorySchema = new Schema({
     type: String,
     required: true,
   },
+  discountpercentage: Number,
 });
 
 module.exports = mongoose.model("category", categorySchema);

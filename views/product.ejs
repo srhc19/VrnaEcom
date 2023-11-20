@@ -60,7 +60,7 @@
       <div class="product-details">
           <h3><%=data.productName%></h3>
           <p class="product-description">Product description goes here. <BR>
-            Provide details about the product, such as its features and benefits.</p>
+            Provide details about the product, <br>such as its features and benefits.</p>
           <p class="product-price"><strong>$<%=data.productPrice%></strong></p>
           <div class="product-options">
               <label for="size">Size:</label>
@@ -71,8 +71,10 @@
                   <!-- Add more size options if needed -->
               </select>
           </div>
-          <a href="/user/addTOCartBtn/<%=data._id%>"> <button class=" btn">Add to Cart</button></a>
-          <button class=" btn">Whishlist</button>
+          <a class=" add-to-cart-btn" href="
+          #" data-card-id="<%=data._id%>" ><button class=" btn">Add to Cart</button></a>
+          <!-- <a href="/user/addTOCartBtn/<%=data._id%>"> <button class=" btn">Add to Cart</button></a>
+          <button class=" btn">Whishlist</button> -->
           <a href="/user/checkout/<%=data._id%>"> <button class=" btn">Buy Now</button></a>
       </div>
   </div>
@@ -127,6 +129,30 @@
     </footer>
 
     <script>
+
+document.querySelector(".add-to-cart-btn").addEventListener("click", function (e) {
+    e.preventDefault();
+    const orderid = document.querySelector(".add-to-cart-btn").getAttribute("data-card-id");
+    
+    fetch(`/user/addToCartBtn/${orderid}`, {
+      method: "GET"
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          if (data.productadded) {
+        
+            // let count = Number(document.querySelector("#cartCount").textContent);
+            // document.querySelector("#cartCount").textContent = count + 1;
+            console.log("Product added to Cart");
+            alert("Product added to Cart")
+          }
+        });
+      } else {
+        console.log("Failed to add product to cart");
+      }
+    });
+  });
+
       // change the 'imagemain' image
       function changeMainImage(clickedImage) {
 
@@ -143,6 +169,9 @@
     });
     
   });
+
+
+
   </script>
     <script
       type="module"

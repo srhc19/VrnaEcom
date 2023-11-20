@@ -22,6 +22,10 @@ const couponsSchema = new Schema({
     type: Number,
     require: true,
   },
+  expirydate:{
+    type:Date,
+    required:true,
+  }
 });
 
 module.exports = mongoose.model("coupons", couponsSchema);

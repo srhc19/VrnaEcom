@@ -91,3 +91,122 @@ td {
   text-decoration: underline;
   color: black;
 }
+/* /////////// */
+@media (max-width: 600px) {
+  .mainContainer {
+    position: relative;
+  }
+
+  .nav-collapsible-btn {
+    display: flex;
+    position: absolute;
+    top: 2%;
+    right: 4%;
+
+    background-color: black;
+  }
+
+  .icons-collapsible {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.519);
+    /* Add a background color to make it readable */
+    border: 1px solid #ccc; /* Add a border for style */
+  }
+
+  .icons-collapsible-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    color: black;
+  }
+
+  .show-icons {
+    display: flex;
+  }
+
+  .toggle-content {
+    display: none;
+  }
+
+  .icons {
+    font-size: 1.5rem;
+  }
+}
+@media (min-width: 600px) {
+  .nav-collapsible-btn,
+  .icons-collapsible,
+  .icons-collapsible-btn,
+  .show-icons {
+    display: none;
+  }
+
+  .toggle-content {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+#toggle_btn {
+  color: black;
+}
+@media (max-width: 600px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 2rem;
+  }
+  th {
+    font-size: 1rem;
+    background-color: rgb(236, 236, 243);
+  }
+  td {
+    font-size: 1rem;
+    background-color: rgb(236, 236, 243);
+  }
+}
+@media (min-width: 800px) and (max-width: 1000px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 3rem;
+  }
+  th {
+    font-size: 1.3rem;
+    background-color: rgb(236, 236, 243);
+  }
+  td {
+    font-size: 1.3rem;
+    background-color: rgb(236, 236, 243);
+  }
+  .adminpanel {
+    font-size: 1.4rem;
+  }
+}
+@media (min-width: 610px) and (max-width: 799px) {
+  .heading-primary {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    font-size: 3rem;
+  }
+  th {
+    font-size: 1.1rem;
+    background-color: rgb(236, 236, 243);
+  }
+  td {
+    font-size: 1.1rem;
+    background-color: rgb(236, 236, 243);
+  }
+  .adminpanel {
+    font-size: 1.3rem;
+  }
+}

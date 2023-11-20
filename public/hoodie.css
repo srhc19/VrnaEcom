@@ -169,3 +169,91 @@ span {
   font-size: 10px;
   font-weight: bold;
 }
+.card {
+  font-size: 1.2rem;
+}
+.span_discount {
+  color: red;
+}
+.outerContainer {
+  min-height: 450px;
+}
+.vrba-heading {
+  text-decoration: none;
+  color: black;
+}
+@media (max-width: 1000px) {
+  .section1-container {
+    position: relative;
+  }
+
+  .nav-collapsible-btn {
+    display: flex;
+    position: absolute;
+    top: 2%;
+    right: 4%;
+  }
+
+  .icons-collapsible {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.519);
+    /* Add a background color to make it readable */
+    border: 1px solid #ccc; /* Add a border for style */
+  }
+
+  .icons-collapsible-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .show-icons {
+    display: flex;
+  }
+
+  .nav-sec {
+    display: none;
+  }
+
+  .icons {
+    font-size: 1.5rem;
+  }
+}
+@media (min-width: 1000px) {
+  .nav-collapsible-btn,
+  .icons-collapsible,
+  .icons-collapsible-btn,
+  .show-icons {
+    display: none;
+  }
+
+  .nav-sec {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+@media (max-width: 600px) {
+  .card {
+    min-width: 25rem;
+    margin-left: 7rem;
+  }
+  h1 {
+    color: rgba(59, 57, 57, 0.54);
+  }
+}
+
+.card {
+  max-width: 18rem;
+  margin-bottom: 3rem;
+}

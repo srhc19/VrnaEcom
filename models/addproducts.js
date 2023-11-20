@@ -34,6 +34,13 @@ const productSchema = new Schema({
     type: String,
     default: true,
   },
+  categoryDiscount: {
+    type: Number,
+  },
+  productOffer: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("addproducts", productSchema);

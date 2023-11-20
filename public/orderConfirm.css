@@ -114,3 +114,8 @@ footer {
   color: white;
   text-decoration: none;
 }
+@media (max-width: 599px) {
+  .footer-container .row {
+    flex-direction: column;
+  }
+}

@@ -17,7 +17,7 @@
     />
     <link rel="stylesheet" href="/userOrderDetails.css" />
  
-    <title>User Cart Page</title>
+    <title>User Order Details</title>
   </head>
   <body>
     <div class="container nav-container">
@@ -35,9 +35,10 @@
     </h5>
     </div>
     <h2 class="primary-heading">Order Details</h2>
+    <span id="span" class=" d-flex align-content-end"></span>
     <div class="container outerContainer">
-
-       
+   
+     
           <div class="container text-center cardContainer">
             <table class="table caption-top">
               <div class="addcontainer">
@@ -45,7 +46,7 @@
            
                
               </div>
-              <thead>
+              <thead >
                 <tr>
                   <th scope="col">S.NO</th>
                   <th scope="col">DATE</th>
@@ -54,16 +55,18 @@
                   <th scope="col">PRODUCT NAME</th>
                   <th scope="col">PRICE</th>
           
-           
+                  <th scope="col"> INVOICE</th>
          
                   <th scope="col">REMOVE</th>
+                  
                   <th></th>
                 </tr>
               </thead>
               <tbody id="productTableBody">
                 <% let num = number ;%>  <% orders.forEach((order) =>{ %>
+                  
                 <tr>
-                  <td scope="row"><%=num%></td>
+                  <td scope="row"><a class="details_link" href="/user/orderdetails/<%=order._id%>"><%=num%></a></td>
                   <td>
                             <%= order.Date %>
                   </td>
@@ -77,15 +80,24 @@
                     <% })%>
                   </td>
                   <td><%=order.totalPrice%></td>
-                  
+                  <td>
+                    <button class="btn btn-danger btns invoice_btn " data-invoice-id="<%= order._id %>">
+                      DOWNLOAD
+                    </button>
+                    
+                    <!-- <a href="/user/invoice/<%=order._id%>">fgrthrftyftgrth</a> -->
+                  </td>
                   <td id="td<%= order._id %>" class="tdbtn">
-                    <% if (order.OrderedState !== "Issued For Return" && order.OrderedState !== "canceled"&&order.OrderedState !== "delivered") { %>
+                    <% if (   order.OrderedState !== "delivered" &&
+                    order.OrderedState !== "Applied For Return" &&
+                    order.OrderedState !== "Accepted" &&
+                    order.OrderedState !== "Rejected"&&  order.OrderedState !== "cancelled") { %>
                       <button class="btn btn-danger btns cance_btn" data-order-id="<%= order._id %>" data-user-id="<%= order.userId %>">
                         CANCEL
                       </button>
                     <% } %>
                   </td>
-                  
+                
               
                 </tr>
                 <% num = num+1%>  <% }) %>
@@ -190,26 +202,79 @@
 
 
 
+// function replaceButtonsForOrder(orderId) {
+//   const tdElement = document.getElementById(`td${orderId}`);
+//   if (tdElement) {
+//     tdElement.innerHTML = `
+//     <input
+//                 placeholder="Enter a Reason"
+//                 class="input-value"
+//                 type="text"
+//                 id="returnreason${orderId}"
+//                 name="returnreason"
+//                 required
+//               />
+//       <button class="btn btn-danger btns  return-btn"  data-return-id="${orderId}" data-user-id="${orderId}" id=
+//       "return${orderId}">
+//         Return
+//       </button>`;
+   
+//   }
+// }
 function replaceButtonsForOrder(orderId) {
   const tdElement = document.getElementById(`td${orderId}`);
   if (tdElement) {
     tdElement.innerHTML = `
-    <input
-                placeholder="Enter a Reason"
-                class="input-value"
-                type="text"
-                id="returnreason${orderId}"
-                name="returnreason"
-                required
-              />
-      <button class="btn btn-danger btns  return-btn"  data-return-id="${orderId}" data-user-id="${orderId}" id=
-      "return${orderId}">
+      <button type="button" class="btn  btn-danger btns return-btn" data-bs-toggle="modal" data-bs-target="#returnModal${orderId}">
         Return
-      </button>`;
-   
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="returnModal${orderId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Select a Reason for Return</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="returnReason${orderId}" id="productDefects${orderId}" value=" Product Defects or Damage">
+                <label class="form-check-label" for="productDefects${orderId}">
+                  Product Defects or Damage
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="returnReason${orderId}" id="changeOfMind${orderId}" value="Change of Mind">
+                <label class="form-check-label" for="changeOfMind${orderId}" >
+                  Change of Mind
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="returnReason${orderId}" id="sizeFitIssues${orderId}" value="  Size/Fit Issues">
+                <label class="form-check-label" for="sizeFitIssues${orderId}">
+                  Size/Fit Issues
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="returnReason${orderId}" id="qualityIssues${orderId}" value="Quality Issues">
+                <label class="form-check-label" for="qualityIssues${orderId}">
+                  Quality Issues
+                </label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-return-id="${orderId}" data-bs-dismiss="modal">
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 }
-
 
 
 function userOrderReturn(){
@@ -239,7 +304,37 @@ document.querySelectorAll('.cance_btn').forEach((button) => {
 
 window.onload = userOrderReturn;
 
+const invoicebtn = document.querySelectorAll(".invoice_btn");
+invoicebtn.forEach((btn) => {
+  btn.addEventListener("click", function () {
+    const orderid = btn.getAttribute("data-invoice-id"); 
+    document.getElementById(`span`).textContent ="Downloading"
+  fetch(`/user/invoice/${orderid}`,{
+    method:"GET",
+  }).then((response) => response.blob()) .then((blob) => {
+    document.getElementById(`span`).textContent =""
+        const blobUrl = URL.createObjectURL(blob);
 
+        
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = blobUrl;
+        a.download = "invoice.pdf"; 
+
+        
+        document.body.appendChild(a);
+        a.click();
+
+    
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch((error) => {
+        console.error("Download Failed:", error);
+        alert("Download Failed");
+      });
+  });
+});
 
 
 
@@ -252,7 +347,7 @@ window.onload = userOrderReturn;
 document.querySelectorAll('.cance_btn').forEach((button) => {
   button.addEventListener("click", function(event) {
     event.preventDefault();
-
+    document.getElementById(`span`).textContent  ="Order Cancelled"
 
     const orderId = this.getAttribute('data-order-id');
     if (orderId) {
@@ -263,7 +358,10 @@ document.querySelectorAll('.cance_btn').forEach((button) => {
       }).then((response) => {
         if (response.ok) {
           response.json().then(data=>{
-            document.getElementById(data.order_id).textContent="canceled"
+            document.getElementById(data.order_id).textContent="cancelled"
+           setInterval(function(){
+            document.getElementById(`span`).textContent=""
+           },1000)
           })
           console.log("Success");
         } else {
@@ -277,46 +375,87 @@ document.querySelectorAll('.cance_btn').forEach((button) => {
 });
 
 
+document.querySelectorAll('.cance_btn').forEach((button) => {
+
+  
+})
+
+
+// document.body.addEventListener("click", function (event) {
+//   if (event.target.classList.contains("return-btn")) {
+//     event.preventDefault();
+//     const orderId = event.target.getAttribute("data-return-id");
+   
+//     if (orderId ) {
+//       console.log("Order ID:", orderId);
+//       const inputValue = document.querySelector(`#returnreason${orderId}`).value.trim();
+//       const validCharactersRegex = /^(?=.*[a-zA-Z\s]).*$/;
+//     console.log(inputValue)
+// if(validCharactersRegex.test(inputValue)){
+  
+//   fetch(`/user/userReturnProduct/${orderId}`, {
+//          method: "POST",
+//          headers:{
+//           "Content-Type": "application/json"
+//          },
+//          body:JSON.stringify({inputValue})
+//        }).then((response) => {
+//          if (response.ok) {
+//            response.json().then((data) => {
+//              document.getElementById(data.order_id).textContent = "Applied For Return";
+//              removeReturnButton(data.order_id);
+//              document.querySelector(`#returnreason${data.order_id}`).style.display = "none"
+            
+//            });
+//            console.log("Success returning product");
+//          } else {
+//            console.log("Error in returning product");
+//          }
+//        });
+// }else{
+//   alert("Enter a Reason")
+// }
+//    } else {
+//       console.log("No order ID found");
+   
+//     }
+// }
+// });
 
 document.body.addEventListener("click", function (event) {
-  if (event.target.classList.contains("return-btn")) {
+  if (event.target.classList.contains("btn-primary") && event.target.hasAttribute("data-return-id")) {
     event.preventDefault();
     const orderId = event.target.getAttribute("data-return-id");
-   
-    if (orderId ) {
+    const selectedReason = document.querySelector(`input[name="returnReason${orderId}"]:checked`);
+    document.getElementById(`span`).textContent = "Applied For Return"
+    if (orderId && selectedReason) {
       console.log("Order ID:", orderId);
-      const inputValue = document.querySelector(`#returnreason${orderId}`).value.trim();
-      const validCharactersRegex = /^(?=.*[a-zA-Z\s]).*$/;
-    console.log(inputValue)
-if(validCharactersRegex.test(inputValue)){
-  
-  fetch(`/user/userReturnProduct/${orderId}`, {
-         method: "POST",
-         headers:{
-          "Content-Type": "application/json"
-         },
-         body:JSON.stringify({inputValue})
-       }).then((response) => {
-         if (response.ok) {
-           response.json().then((data) => {
-             document.getElementById(data.order_id).textContent = "Applied For Return";
-             removeReturnButton(data.order_id);
-             document.querySelector(`#returnreason${data.order_id}`).style.display = "none"
-            
-           });
-           console.log("Success returning product");
-         } else {
-           console.log("Error in returning product");
-         }
-       });
-}else{
-  alert("Enter a Reason")
-}
-   } else {
-      console.log("No order ID found");
-   
+      console.log("Selected Reason:", selectedReason.value);
+
+      fetch(`/user/userReturnProduct/${orderId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reason: selectedReason.value }),
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            document.getElementById(data.order_id).textContent = "Applied For Return";
+            removeReturnButton(data.order_id);
+            setInterval(function(){
+              document.getElementById(`span`).textContent = ""
+            },1000)
+          });
+          console.log("Success returning product");
+        } else {
+          console.log("Error in returning product");
+        }
+      });
+    } else {
+      console.log("No order ID or selected reason found");
     }
-}
+  }
 });
 function removeReturnButton(orderId) {
   const returnButton = document.getElementById(`return${orderId}`);
@@ -324,7 +463,6 @@ function removeReturnButton(orderId) {
     returnButton.remove();
   }
 }
-
 
 
   </script>

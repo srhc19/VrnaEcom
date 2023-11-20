@@ -116,3 +116,41 @@ h2 {
   align-items: center;
   gap: 1.2rem;
 }
+
+@media (max-width: 599px) {
+  .login-img {
+    display: none;
+  }
+  .login-container {
+    margin-left: 6rem;
+  }
+  .heading-primary {
+    margin-left: 7rem;
+  }
+  .footer-container .row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 500px) {
+  .login-container {
+    margin-left: 5rem;
+  }
+  .heading-primary {
+    margin-left: 4rem;
+  }
+}
+@media (min-width: 600px) and (max-width: 1000px) {
+  .login-img {
+    display: none;
+  }
+  .login-container {
+    margin-left: 18rem;
+  }
+  .heading-primary {
+    margin-left: 18rem;
+  }
+  .footer-container .row {
+    flex-direction: column;
+  }
+}

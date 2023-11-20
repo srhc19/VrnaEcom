@@ -28,34 +28,71 @@
         <h5>ABOUT</h5>
       </div>
       <div class="nav-sec">
-        <h5><ion-icon name="search-outline"></ion-icon> </h5>
-        <h5><ion-icon name="person-outline"></ion-icon></h5>
-        <h5><ion-icon name="cart-outline"></ion-icon></h5>
-        
-        <button>LogOut</button>
+      
+        <h4><a  class="icons" href="/user/Whishlist"><ion-icon name="heart-outline"></ion-icon></a></h4>
+        <!-- <h4><ion-icon name="search-outline"></ion-icon> </h4> -->
+        <h4><a  class="icons" href="/user/userprofile"><ion-icon name="person-outline"></ion-icon></a></h4>
+        <h4><div class="cart-icon-container">
+          <a class="icons" href="/user/usercart">
+            <ion-icon name="cart-outline"></ion-icon>
+          
+          </a>
+        </div></h4>
+
+        <h5><form action="/user/logout?_method=DELETE" method="post">
+          <button class="logout-btn" type="submit">Log Out</button>
+        </form></h5>
         </div>
-    </h5>
+                <!-- Collapsible button for icons on screens smaller than 600px -->
+                <div class="nav-collapsible-btn">
+                  <button id="collapsibleBtn" class="icons-collapsible-btn">
+                    <ion-icon id="collapsebtn" name="menu-outline"></ion-icon>
+                  </button>
+        
+                  <!-- Collapsible icons -->
+                  <div class="icons-collapsible">
+                    <a class="icons" href="/user/Whishlist"><ion-icon name="heart-outline"></ion-icon></a>
+                    <a class="icons" href="/user/userprofile"><ion-icon name="person-outline"></ion-icon></a>
+                    <div class="cart-icon-container">
+                      <a class="icons" href="/user/usercart">
+                        <ion-icon name="cart-outline"></ion-icon>
+                      
+                      </a>
+                    </div>
+                    <form action="/user/logout?_method=DELETE" method="post">
+                      <button class="logout-btn" type="submit">Log Out</button>
+                    </form>
+                  </div>
+                </div>
+
     </div>
     <div class="container">
    
-       
-
-        <div class="main-container">
+         <div class="main-container">
           <ul>
             <li><strong>FIRST NAME:</strong> <%= user.firstname %></li>
             <li><strong>LAST NAME:</strong> <%= user.lastname %></li>
             <li><strong>CONTACT NUMBER:</strong> <%= user.contactnumber %></li>
             <li><strong>EMAIL:</strong> <%= user.email %></li>
+         <li><div class="d-flex  justify-content-center referral_Code">
+          <input type="String"  id="copyInput" value= "http://localhost:3000/user/Signup?referral=<%=user._id.toString()%>">
+          <button id="copyButton"">Copy</button>
+        </div></li>
         </ul>
         <div>
           
 
           <a href="/user/editaddress"><button>EDIT ADDRESS </button></a>
           <a href="/user/userOrderDetails"><button>ORDER HISTORY </button></a>
+          <a href="/user/usereditdetails"><button>EDIT </button></a>
+          <a href="/user//walletHistory"><button>WALLET HISTORY </button></a>
+
             
         </div>
          
         </div>
+
+      
      
     </div>
     <footer>
@@ -105,6 +142,23 @@
         <p class="copyright">Copyright © 3333 All rights reserved | VRNA</p>
       </div>
     </footer>
+
+    <script>
+      document.getElementById("copyButton").addEventListener("click", function () {
+        document.getElementById("copyInput").select();
+        document.execCommand("copy");
+        document.getSelection().removeAllRanges();
+      });
+
+      document.addEventListener("DOMContentLoaded", function() {
+    var collapsibleBtn = document.getElementById("collapsibleBtn");
+    var iconsCollapsible = document.querySelector(".icons-collapsible");
+
+    collapsibleBtn.addEventListener("click", function() {
+      iconsCollapsible.classList.toggle("show-icons");
+    });
+  });
+    </script>
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"

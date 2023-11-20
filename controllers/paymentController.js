@@ -1,11 +1,12 @@
 const cartModel = require("../models/cart");
 const Razorpay = require("razorpay");
 const orderModel = require("../models/order");
-const RAZORPAY_ID_KEY = "rzp_test_bMgPK2HOIcHObe";
-RAZORPAY_SECRET_KEY = "00z3sy0mYQ3w930Ry1o4A6Oz";
+const Product = require("../models/addproducts");
+
+require("dotenv").config();
 const razorpay = new Razorpay({
-  key_id: RAZORPAY_ID_KEY,
-  key_secret: RAZORPAY_SECRET_KEY,
+  key_id: process.env.RAZORPAY_ID_KEY,
+  key_secret: process.env.RAZORPAY_SECRET_KEY,
 });
 
 async function orderConfirmed(req, res) {
@@ -21,7 +22,7 @@ async function paynow(req, res) {
   try {
     const orderId = req.session.orderid;
     const orderdetails = await orderModel.findOne({ orderId });
-    console.log(orderdetails.totalPrice);
+
     let totalPrice = orderdetails.totalPrice;
     const hashedid = orderdetails._id;
     const options = {
@@ -33,8 +34,6 @@ async function paynow(req, res) {
 
     razorpay.orders.create(options, async function (err, order) {
       if (err) {
-        console.error(err);
-
         res.status(500).send("An error occurred while creating the order");
         return;
       }
@@ -47,4 +46,69 @@ async function paynow(req, res) {
   }
 }
 
-module.exports = { orderConfirmed, paynow };
+async function getrazorpayID(req, res) {
+  try {
+    const Payment_id = req.body.paymentId;
+
+    const orderId = req.session.orderid;
+    const order = await orderModel.findOne({ orderId });
+
+    let productids = order.productsInfo.map((info) => {
+      return info.productId;
+    });
+
+    for (const id of productids) {
+      let product = await Product.findOne({ _id: id });
+    }
+
+    order.razorPayment_id = Payment_id;
+    order.paymentMode = "Online Payment";
+    order.razorpaymentStatus = "success";
+
+    await order.save();
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "server error" });
+  }
+}
+
+async function razorrejection(req, res) {
+  const error = req.body.error;
+  const Payment_id = req.body.paymentID;
+
+  const orderId = req.session.orderid;
+  const order = await orderModel.findOne({ orderId });
+
+  order.razorPayment_id = Payment_id;
+  order.paymentMode = "Online Payment";
+  order.razorpaymentStatus = "Failed";
+  order.save();
+
+  req.session.razorpayStatus = true;
+  return res.status(200).json({ success: true });
+}
+
+function failedPayment(req, res) {
+  try {
+    res.render("failedPayment");
+  } catch (error) {
+    res.status(500).json({ message: "server error" });
+  }
+}
+
+async function paymentSuccess(req, res) {
+  const razorpayPaymentResponse = req.body;
+
+  res.render("payment-success-page", {
+    paymentResponse: razorpayPaymentResponse,
+  });
+}
+
+module.exports = {
+  orderConfirmed,
+  paynow,
+  getrazorpayID,
+  razorrejection,
+  failedPayment,
+  paymentSuccess,
+};

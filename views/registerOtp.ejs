@@ -127,15 +127,15 @@
        let intervalId;
       function updateTimerDisplay(minutes, seconds) {
           const timerElement = document.getElementById("timer");
-          timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+          timerElement.textContent = `00:${seconds.toString().padStart(2, "0")}`;
       }
 
       
       function startTimer() {
-          let totalSeconds = 300;
+          let totalSeconds = 30;
 
          
-          updateTimerDisplay(5, 0);
+          updateTimerDisplay(0, 30);
 
      
           const intervalId = setInterval(function () {

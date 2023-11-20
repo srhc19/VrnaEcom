@@ -33,11 +33,41 @@ const orderSchema = new Schema({
     type: String,
     default: "Online Payment",
   },
-  totalPrice: Number,
-  razorPayment_id: String,
-  razorpaymentStatus: String,
-  returnReason: String,
-  paymentStatus: String,
+  totalPrice: {
+    type: Number,
+  },
+  razorPayment_id: {
+    type: String,
+  },
+  razorpaymentStatus: {
+    type: String,
+  },
+  returnReason: {
+    type: String,
+  },
+  paymentStatus: {
+    type: String,
+  },
+  addressdetails: {
+    address: {
+      type: String,
+      default: "",
+    },
+
+    postalCode: {
+      type: Number,
+      default: 686638,
+    },
+    contactNumber: {
+      type: Number,
+    },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+  },
 });
 
 module.exports = mongoose.model("order", orderSchema);
