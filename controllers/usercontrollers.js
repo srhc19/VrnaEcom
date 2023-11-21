@@ -12,41 +12,48 @@ const category = require("../models/category");
 
 require("dotenv").config();
 const loginPage = function (req, res) {
-  res.setHeader("Cache-Control", "no-store, max-age=0");
-  req.session.user = null;
+  // res.setHeader("Cache-Control", "no-store, max-age=0");
+  try {
+    // req.session.user = null;
 
-  res.render("login.ejs");
+    res.render("login.ejs");
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const postLoginPage = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await UserModel.findOne({ email });
-  if (!user) {
-    req.flash("error", "Invalid Email");
-    return res.redirect("/user/login");
-  }
-  if (user.isBlocked) {
-    req.flash("error", "Your Account has been blocked by the admin");
-    return res.redirect("/user/login");
-  }
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    req.flash("error", "Invalid Password");
-    return res.redirect("/user/login");
-  }
-  req.session.user = user;
+  try {
+    const { email, password } = req.body;
+    console.log(req.body);
 
-  // req.session.user = {
-  //   _id: user._id,
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      console.log("not user working");
+      req.flash("error", "Invalid Email");
+      return res.redirect("/user/login");
+    }
+    if (user.isBlocked) {
+      console.log("blocked");
+      req.flash("error", "Your Account has been blocked by the admin");
+      return res.redirect("/user/login");
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.log("no match password");
+      req.flash("error", "Invalid Password");
+      return res.redirect("/user/login");
+    }
+    req.session.user = user;
 
-  //   email: user.email,
-  //   isAdmin: user.isAdmin, // Store the isAdmin information in the session
-  // };
-  res.redirect("/user/");
+    console.log("user working");
+    res.redirect("/user/");
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const displayMainPage = async function (req, res) {
-  res.setHeader("Cache-Control", "no-store, max-age=0");
   req.session.ordercode = null;
   // Coupon
   req.session.couponCode = null;
@@ -116,6 +123,7 @@ const displayMainPage = async function (req, res) {
       });
     }
   } else {
+    console.log("loginhhhh");
     res.redirect("/user/login");
   }
 };
@@ -141,15 +149,16 @@ async function displayAdminPage(req, res) {
 }
 
 function postLogOut(req, res) {
-  req.session.user = null;
-  res.setHeader("Cache-Control", "no-store, max-age=0");
+  try {
+    req.session.user = null;
+    res.setHeader("Cache-Control", "no-store, max-age=0");
 
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error destroying session:", err);
-    }
+    req.session.destroy();
     res.redirect("/user/login");
-  });
+  } catch (e) {
+    console.error(e);
+    res.redirect("/user/");
+  }
 }
 
 const displayRegister = (req, res) => {
@@ -295,17 +304,22 @@ const userLogOut = (req, res) => {
   });
 };
 function checkAuthenticated(req, res, next) {
+  console.log(req.session.user, "llllllllllllllllllllllllllllllllll");
   if (req.session && req.session.user) {
+    console.log(req.session.user, "///////////////////////////////");
     return next();
   }
   res.redirect("/user/login");
 }
+const redirectRouter = (req, res, next) => {
+  res.redirect("/user/login");
+};
 
 function checkNotAuthenticated(req, res, next) {
   if (!(req.session && req.session.user)) {
     return next();
   }
-  res.redirect("/");
+  res.redirect("/user/");
 }
 async function userProfile(req, res) {
   try {
@@ -1006,7 +1020,7 @@ async function forgotpswresendotp(req, res) {
 async function checkBlocked(req, res, next) {
   const userId = req.session.user._id.toString();
   const user = await UserModel.findOne({ _id: userId });
-
+  console.log(user, "blocked use//////////////////////////////////////");
   if (user.isBlocked) {
     req.flash("error", "Your Account has been blocked by the admin");
     return res.redirect("/user/login");
@@ -1088,4 +1102,6 @@ module.exports = {
   checkBlocked,
   usereditdetails,
   postedituserdetails,
+
+  redirectRouter,
 };

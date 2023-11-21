@@ -11,8 +11,9 @@ const session = require("express-session");
 const methodOverride = require("method-override");
 const nocache = require("nocache");
 const bodyParser = require("body-parser");
+// const logger = require("morgan");
 app.use(nocache());
-
+// app.use(logger());
 const MongoDBSession = require("connect-mongodb-session")(session);
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -39,9 +40,8 @@ const store = new MongoDBSession({
 app.use(
   session({
     secret: "key that will sign cookie",
-    resave: false,
     saveUninitialized: false,
-    store: store,
+    resave: false,
   })
 );
 app.use(bodyParser.json());
@@ -74,6 +74,9 @@ app.use("/admin", adminRoutes);
 
 const userRoutes = require("./routes/userRoutes");
 app.use("/user", userRoutes);
+
+const { redirectRouter } = require("./controllers/usercontrollers");
+app.get("/", redirectRouter);
 
 const otpRoutes = require("./routes/otpRoutes");
 app.use("/otp", otpRoutes);

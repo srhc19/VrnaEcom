@@ -87,7 +87,7 @@
                
                     <p class="card-text product_Price">$<%= products[i].productPrice %>  </p>
                     <span class="span_discount">(<%=products[i].categoryDiscount%>% off)</span>
-                    <p class="card-text"><strong>$<%= ((1 - (products[i].categoryDiscount / 100)) * products[i].productPrice) %></strong>  </p>
+                    <p class="card-text"><strong>$<%= ((1 - (products[i].categoryDiscount / 100)) * products[i].productPrice).toFixed(2) %></strong>  </p>
                  <% } else{%>
                   <p class="card-text">$<%= products[i].productPrice %>  </p>
                <%  } %>

@@ -11,17 +11,13 @@ const orderController = require("../controllers/orderController");
 const { addProducts } = require("../controllers/adminController");
 const offerController = require("../controllers/offerController");
 
-
-
-
-
-
-
-
-
 router.get("/userprofile", userController.userProfile);
 
-router.get("/login", userController.loginPage);
+router.get(
+  "/login",
+  userController.checkNotAuthenticated,
+  userController.loginPage
+);
 
 router.post("/login", userController.postLoginPage);
 
