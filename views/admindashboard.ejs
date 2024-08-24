@@ -59,8 +59,8 @@
             <div class="col">
               Total Purchase Amount : <%=totalAmount.toFixed(2)%>
             </div>
-            <!-- <div class="col">Column</div> -->
-            <!-- <div class="col">Column</div> -->
+            <div class="col">Total Orders: <%=orderscount%></div>
+            <div class="col">Total Products : <%=productscount%></div>
           </div>
         </div>
         <canvas id="ordersChart" width="400" height="200"></canvas>
@@ -69,6 +69,33 @@
           <ul>
             <% products.forEach((product)=>{ %>
             <li><%=product.productName%> : <%=product.productStock %></li>
+            <hr />
+            <% }) %>
+          </ul>
+        </div>
+        <h6 class="text-center">Sales Report</h6>
+        <div class="container">
+          <div>
+            <form action="/admin/createSalesReport" method="POST">
+              <label for="start-date">Start Date</label>
+              <input type="date" id="start_date" name="start_date" required />
+              <label for="end-date">End Date</label>
+              <input type="date" id="end_date" name="end_date" required />
+
+              <button type="submit">Create Report</button>
+            </form>
+          </div>
+        </div>
+
+        <h6 class="text-center">Latest Orders</h6>
+        <div class="container">
+          <ul>
+            <% ordersInLastFiveDays.forEach((order)=>{ %>
+            <div class="d-flex justify-content-between">
+              <div>ID :<%=order._id%></div>
+              <div>USERNAME :<%=order.userName%></div>
+              <div>PRICE :<%=(order.totalPrice).toFixed(1)%></div>
+            </div>
             <hr />
             <% }) %>
           </ul>

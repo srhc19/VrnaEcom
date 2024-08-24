@@ -107,9 +107,14 @@
           <h2 class="create-btn">
             <a class="login-btn" href="/user/login">LOGIN</a>
           </h2>
+          <% if (messages.error) { %>
+            <p class="error-message" style="color: red; font-size: 1.5rem;"><%= messages.error[0] %></p>
+        <% } %>
         </div>
       </div>
+      
     </div>
+    
     <footer>
       <div class="text-center footer-container">
         <div class="container">

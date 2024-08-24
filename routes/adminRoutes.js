@@ -47,7 +47,7 @@ router.get(
   adminController.checkAdminAuthenticated,
   adminController.adminProduct
 );
-router.get("/product/:productId", userController.productdetails);
+// router.get("/product/:productId", userController.productdetails);
 
 // admin products
 router.post(
@@ -155,6 +155,7 @@ router.get(
   adminController.checkAdminAuthenticated,
   adminController.dashboard
 );
-
+router.post("/createSalesReport", orderController.salesReport);
 router.get("/orders-chart", orderController.orders_chart);
+
 module.exports = router;

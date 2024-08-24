@@ -48,6 +48,7 @@
               <thead>
                 <tr>
                   <th scope="col">S.NO</th>
+                  <th scope="col">Order Id</th>
                   <th scope="col">Transactions</th>
                   <th scope="col">Amount</th>
                
@@ -60,23 +61,27 @@
               </thead>
             
               <tbody id="productTableBody" class="wallet-body">
-                <% let num = 1 ;%> <% wallet.forEach((transaction) =>{ %>
-                <tr>
-                  <th scope="row"><%=num%></th>
-                  <td>
-                    <div class="productname">
-                     <% if(transaction.amount >0) { %>
-                      <p>Credited</p>
-                  <%   } else { %>
-                    <p>Debited</p>
-                <%  } %>
-                    </div>
-                  </td>
-                  
-                     <td><%=transaction.amount%></td>
-    
-                </tr>
-                <% num = num+1%> <% }) %>
+                <% let num = 1; %>
+                <% wallet.forEach((transaction) => { %>
+                  <tr>
+                    <th scope="row"><%= num %></th>
+          
+                    <td><a href="/user/orderdetails/<%= transaction.orderid ? transaction.orderid : "" %>" class="order-id-link"><%= transaction.orderid ? transaction.orderid : " " %></a></td>
+
+
+                    <td>
+                      <div class="productname">
+                        <% if (transaction.amount > 0) { %>
+                          <p>Credited</p>
+                        <% } else { %>
+                          <p>Debited</p>
+                        <% } %>
+                      </div>
+                    </td>
+                    <td><%= transaction.amount %></td>
+                  </tr>
+                  <% num = num + 1; %>
+                <% }); %>
               </tbody>
                
             </table>

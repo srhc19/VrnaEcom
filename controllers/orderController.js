@@ -1,6 +1,6 @@
 const orderModel = require("../models/order");
 const Product = require("../models/addproducts");
-const UserModel = require("../models/order");
+const UserModel = require("../models/user");
 const user = require("../models/user");
 const OrderModel = require("../models/order");
 
@@ -176,13 +176,16 @@ async function storeTotalPrice(req, res) {
     } = req.body;
     const orderId = req.session.orderid;
     const order = await orderModel.findOne({ orderId });
+
     if (walletApplied) {
       const user = await UserModel.findOne({ _id: order.userId });
 
       user.wallet.push({
         amount: Number(-wallet_amount),
         walletdate: Date.now(),
+        orderid: order._id,
       });
+
       await user.save();
     }
 
@@ -373,6 +376,69 @@ async function orders_chart(req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+async function salesReport(req, res) {
+  try {
+    const { start_date, end_date } = req.body;
+    const today = Date.now();
+    if (
+      new Date(start_date) > new Date(end_date) ||
+      new Date(end_date) > today
+    ) {
+      return res.redirect("/admin/dashboard");
+    }
+
+    console.log("Start Date:", start_date);
+    console.log("End Date:", end_date);
+
+    const orders = await orderModel.find({
+      Date: {
+        $gte: new Date(start_date),
+        $lte: new Date(end_date),
+      },
+    });
+    let totalOrders = await orderModel
+      .find({
+        Date: {
+          $gte: new Date(start_date),
+          $lte: new Date(end_date),
+        },
+      })
+      .countDocuments();
+    let totalsales = 0;
+    orders.forEach((order) => {
+      totalsales += order.totalPrice;
+    });
+
+    let orderCanceled = 0;
+    orders.forEach((order) => {
+      if (order.OrderedState === "cancelled") {
+        orderCanceled++;
+      }
+    });
+    let orderdelivered = 0;
+    orders.forEach((order) => {
+      if (order.OrderedState === "delivered") {
+        orderdelivered++;
+      }
+    });
+    let orderReturned = 0;
+    orders.forEach((order) => {
+      if (order.OrderedState === "Accepted") {
+        orderReturned++;
+      }
+    });
+    res.render("salesReport", {
+      totalsales,
+      totalOrders,
+      orderCanceled,
+      orderdelivered,
+      orderReturned,
+    });
+  } catch (error) {
+    res.status(500).json({ message: " server error" });
+  }
+}
 module.exports = {
   userOrderDetails,
   userorderCancel,
@@ -387,4 +453,5 @@ module.exports = {
   adminOrderManagement,
   adminupdateReturnStatus,
   orders_chart,
+  salesReport,
 };

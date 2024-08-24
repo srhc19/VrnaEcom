@@ -4,6 +4,8 @@ const UserModel = require("../models/user");
 async function findCoupon(req, res) {
   try {
     const enteredCouponCode = req.body.enteredCouponCode;
+    const userid = req.session.user._id.toString();
+    const user = await UserModel.findOne({ _id: userid });
 
     const coupon = await couponsModel.findOne({
       couponCode: enteredCouponCode,
@@ -27,7 +29,22 @@ async function findCoupon(req, res) {
         message: "you can only use one coupon per order",
       });
     }
-
+    if (!user.usedCoupons) {
+      console.log("!usedCoupons");
+      user.usedCoupons = [];
+      user.usedCoupons.push(enteredCouponCode);
+      user.save();
+    } else {
+      console.log("usedCoupons");
+      if (!user.usedCoupons.includes(enteredCouponCode)) {
+        user.usedCoupons.push(enteredCouponCode);
+        user.save();
+      } else {
+        return res.status(400).json({
+          message: "you already used this coupon",
+        });
+      }
+    }
     const discount = coupon.Discount;
     req.session.couponCode = enteredCouponCode;
     req.session.couponapplied = true;
@@ -142,6 +159,17 @@ async function updateCoupon(req, res) {
     const { min, max, Discount, expirydate } = req.body;
     const currentDate = new Date();
     const selectedDate = new Date(expirydate);
+    if (!min.trim() || !max.trim() || !Discount.trim() || !expirydate.trim()) {
+      req.flash("error", "Enter all values correctly");
+      return res.redirect("/admin/adminCoupons");
+    }
+    if (min < 0 || max < 0 || Discount < 0) {
+      req.flash(
+        "error",
+        "Minimum, Maximum, and Discount percentage cannot be negative"
+      );
+      return res.redirect("/admin/adminCoupons");
+    }
     if (selectedDate <= currentDate) {
       alert("Expiry date should be set to a future date.");
       return;
@@ -162,10 +190,33 @@ async function AddCoupon(req, res) {
   try {
     const { couponname, minmum, maximum, Discountpercentage, date } = req.body;
 
+    if (
+      !couponname.trim() ||
+      !minmum.trim() ||
+      !maximum.trim() ||
+      !Discountpercentage.trim() ||
+      !date.trim()
+    ) {
+      req.flash("error", "Enter all values correctly");
+      return res.redirect("/admin/adminCoupons");
+    }
+
+    // Validate if minmum, maximum, and Discountpercentage are not negative
+    if (minmum < 0 || maximum < 0 || Discountpercentage < 0) {
+      req.flash(
+        "error",
+        "Minimum, Maximum, and Discount percentage cannot be negative"
+      );
+      return res.redirect("/admin/adminCoupons");
+    }
+
     const couponNameRegex = /^[a-zA-Z0-9]+$/;
-    if (!couponNameRegex.test(couponname.value)) {
-      alert("Coupon name should contain only letters and numbers.");
-      return;
+    if (!couponNameRegex.test(couponname)) {
+      req.flash(
+        "error",
+        "Coupon name should contain only letters and numbers."
+      );
+      return res.redirect("/admin/adminCoupons");
     }
 
     let coupon = await couponsModel.findOne({ couponCode: couponname });
@@ -173,8 +224,8 @@ async function AddCoupon(req, res) {
     const currentDate = new Date();
     const selectedDate = new Date(date);
     if (selectedDate <= currentDate) {
-      alert("Expiry date should be set to a future date.");
-      return;
+      req.flash("error", "Expiry date should be set to a future date.");
+      return res.redirect("/admin/adminCoupons");
     }
 
     if (coupon) {

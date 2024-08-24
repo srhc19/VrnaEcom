@@ -75,10 +75,19 @@ app.use("/admin", adminRoutes);
 const userRoutes = require("./routes/userRoutes");
 app.use("/user", userRoutes);
 
-const { redirectRouter } = require("./controllers/usercontrollers");
-app.get("/", redirectRouter);
+// const { redirectRouter } = require("./controllers/usercontrollers");
+// app.get("/", redirectRouter);
 
 const otpRoutes = require("./routes/otpRoutes");
 app.use("/otp", otpRoutes);
+app.use((req, res, next) => {
+  res.status(404).render("error");
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(404).render("error");
+});
 
 app.listen(3000);

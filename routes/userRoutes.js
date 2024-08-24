@@ -57,7 +57,7 @@ router.get(
 );
 
 router.get("/usercart", userController.checkBlocked, userController.usercart);
-
+router.get("/product/:productId", userController.productdetails);
 router.get(
   "/userCart/delete/:productId",
   userController.checkBlocked,

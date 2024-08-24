@@ -604,6 +604,18 @@ async function dashboard(req, res) {
   try {
     const orders = await OrderModel.find();
     const products = await Product.find({}, "productName productStock");
+    const productscount = await Product.find().countDocuments();
+    const orderscount = await OrderModel.find().countDocuments();
+    const today = new Date();
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(today.getDate() - 5);
+
+    const ordersInLastFiveDays = await OrderModel.find({
+      Date: {
+        $gte: fiveDaysAgo,
+        $lt: today,
+      },
+    }).limit(6);
 
     let totalAmount = 0;
     orders.forEach((order) => {
@@ -615,7 +627,13 @@ async function dashboard(req, res) {
       }
     });
 
-    res.render("admindashboard.ejs", { totalAmount, products });
+    res.render("admindashboard.ejs", {
+      totalAmount,
+      products,
+      orderscount,
+      productscount,
+      ordersInLastFiveDays,
+    });
   } catch (error) {
     res.status(500).json({ message: " server error" });
   }

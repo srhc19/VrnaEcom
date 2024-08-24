@@ -327,3 +327,11 @@ h2 {
   color: rgb(5, 5, 5);
   background-color: #b3aaa3;
 }
+.order-id-link {
+  color: black;
+  text-decoration: none;
+}
+.order-id-link:hover,
+.order-id-link:active {
+  text-decoration: underline;
+}

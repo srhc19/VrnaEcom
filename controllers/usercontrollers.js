@@ -216,11 +216,25 @@ async function postRegister(req, res) {
 
   try {
     let user = await UserModel.findOne({ email });
+    const nameRegex = /^[a-zA-Z]+$/;
 
+    if (!nameRegex.test(firstname) || !nameRegex.test(lastname)) {
+      req.flash("error", "Enter the values correctly");
+      return res.redirect("/user/register");
+    }
+    const contactNumberRegex = /^[0-9]+$/;
+    if (!contactNumberRegex.test(contactnumber) || contactnumber.length < 7) {
+      req.flash("error", "Enter the Contact Number correctly");
+      return res.redirect("/user/register");
+    }
     if (user) {
       return res.redirect("/user/login");
     }
 
+    if (password.length <= 4 || /\s/.test(password)) {
+      req.flash("error", "Password should have four or more characters");
+      return res.redirect("/user/register");
+    }
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 5);
 
@@ -304,9 +318,7 @@ const userLogOut = (req, res) => {
   });
 };
 function checkAuthenticated(req, res, next) {
-  console.log(req.session.user, "llllllllllllllllllllllllllllllllll");
   if (req.session && req.session.user) {
-    console.log(req.session.user, "///////////////////////////////");
     return next();
   }
   res.redirect("/user/login");
@@ -316,6 +328,12 @@ const redirectRouter = (req, res, next) => {
 };
 
 function checkNotAuthenticated(req, res, next) {
+  if (!(req.session && req.session.user)) {
+    return next();
+  }
+  res.redirect("/user/");
+}
+function checkuserauth(req, res, next) {
   if (!(req.session && req.session.user)) {
     return next();
   }
@@ -756,8 +774,17 @@ async function paymentSelection(req, res) {
     const product = await Product.findById(productId);
     const userId = req.session.user._id.toString();
     const hashedid = await bcrypt.hash("password", 10);
-
+    let coupons;
     const user = await UserModel.findOne({ _id: userId });
+    const usedCouponsArray = user.usedCoupons;
+    console.log(usedCouponsArray);
+    if (usedCouponsArray) {
+      coupons = await couponsModel.find({
+        couponCode: { $nin: usedCouponsArray },
+      });
+    } else {
+      coupons = await couponsModel.find();
+    }
     let walletamount = 0;
     user.wallet.forEach((transaction) => {
       walletamount = walletamount + transaction.amount;
@@ -807,6 +834,7 @@ async function paymentSelection(req, res) {
         totalPrice,
         price,
         walletamount,
+        coupons,
       });
     } else {
       const usercart = await cartModel.findOne({ userId });
@@ -872,6 +900,7 @@ async function paymentSelection(req, res) {
           totalPrice,
           price,
           walletamount,
+          coupons,
         });
       }
     }
@@ -1104,4 +1133,5 @@ module.exports = {
   postedituserdetails,
 
   redirectRouter,
+  checkuserauth,
 };

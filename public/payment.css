@@ -358,3 +358,6 @@ input[type="radio"] {
   color: rgb(5, 5, 5);
   background-color: #b3aaa3;
 }
+#coupons_dropdown {
+  font-size: 1.5rem;
+}

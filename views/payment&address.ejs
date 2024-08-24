@@ -144,7 +144,16 @@
             <p id="error_message"></p>
           <div class="d-flex flex-column">
             
-            <input type="text" id="coupons_field">
+            <!-- <input type="text" id="coupons_field"> -->
+            <div>
+              
+              <select id="coupons_dropdown" onchange="updateCouponField()">
+                <% coupons.forEach(function(coupon) { %>
+                  <option value="<%= coupon.couponCode %>"><%= coupon.couponCode %></option>
+                <% }); %>
+              </select>
+              <input type="text" id="coupons_field" oninput="updateDropdown()">
+            </div>
             <label for="coupons_field" class="text">Enter Coupon Code</label>
             <button id="applyCouponBtn" class="btn btn-Buynow">Apply</button>
           </div>
@@ -439,7 +448,29 @@ body : JSON.stringify({code})
   w.checked = false;
 };
 
+// coupons dropdown 
+function updateCouponField() {
+      var dropdown = document.getElementById("coupons_dropdown");
+      var inputField = document.getElementById("coupons_field");
+      inputField.value = dropdown.value;
+    }
 
+    function updateDropdown() {
+      var dropdown = document.getElementById("coupons_dropdown");
+      var inputField = document.getElementById("coupons_field");
+      var inputValue = inputField.value;
+
+      // Check if the typed value is not an existing option
+      if (![...dropdown.options].some(option => option.value === inputValue)) {
+        // Create a new option for the typed value
+        var newOption = document.createElement("option");
+        newOption.value = inputValue;
+        newOption.text = inputValue;
+        dropdown.add(newOption);
+      }
+
+      dropdown.value = inputValue;
+    }
       </script>
 
 
